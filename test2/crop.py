@@ -25,7 +25,6 @@ dir = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
 resource_dir = 'resource'
 image_dir = '03_testdata'
 analysis_dir = 'analysis'
-outputdir = 'crop_img'
 csvfilename = 'cropsize.csv'
 csvpath = os.path.join(dir, analysis_dir, csvfilename)
 
@@ -58,9 +57,13 @@ with open(csvpath, 'rb') as csvfile:
 print(csv_header)
 print(dict_list)
 
+
 # load bio-format
 from loci.plugins import BF
 from loci.plugins.in import ImporterOptions
+
+# define output folder
+outputdir = 'crop_img'
 
 for i in range(len(filelist)): 
 #for i in range(1):
