@@ -19,7 +19,6 @@ def FileSaverCheck(outputdir, filename):
 # ---- End Functions ---- #
 
 
-
 imp = IJ.getImage()
 print(imp.title.replace('.nd2', ''))
 
@@ -54,8 +53,6 @@ fs = FileSaver(imp_c2)
 filename = imp.title.replace('.nd2', '') + '_c2' + '.tif'
 FileSaverCheck(path, filename)
 imp_c2.close()
-
-
 
 # functions ------------------------------------------
 

@@ -18,7 +18,7 @@ with open(csvpath, 'rb') as csvfile:
         dict_list[row[0]] = row[1:]        
 print(csv_header)
 print(dict_list)
-print(dict_list(0))
+print(dict_list)
 '''
 from jarray import array
 javaarray = array(csvfile, )

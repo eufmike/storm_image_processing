@@ -3,12 +3,31 @@ import sys
 
 from ij import IJ
 import os
+import csv
+from ij.io import FileSaver
+
+# ---- Start Functions ----#
+def FileSaverCheck(outputdir, filename):
+	if os.path.exists(outputdir) and os.path.isdir(outputdir):  
+  		print "folder exists:", outputdir
+  		filepath = os.path.join(outputdir, filename) # Operating System-specific  
+  		if os.path.exists(filepath):
+  			print "File exists! Not saving the image, would overwrite a file!"  
+  		elif fs.saveAsTiff(filepath):
+  			print "File saved successfully at ", filepath  
+	else:  
+  		print "Folder does not exist or it's not a folder!" 
+
+# ---- End Functions ---- #
 
 # prepare the file path
 dir = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
 resource_dir = 'resource'
 image_dir = '03_testdata'
 analysis_dir = 'analysis'
+outputdir = 'crop_img'
+csvfilename = 'cropsize.csv'
+csvpath = os.path.join(dir, analysis_dir, csvfilename)
 
 path = os.path.join(dir, resource_dir, image_dir)
 #imgfolderlist = os.listdir(path)
@@ -25,15 +44,7 @@ for directory, dir_names, file_names in os.walk(path):
 			fileabslist.append(filepath_tmp)
 print(filelist)
 
-# load the cropsize 
-import os
-import csv
-dir = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-resource_dir = 'resource'
-image_dir = '03_testdata'
-analysis_dir = 'analysis'
-csvfilename = 'cropsize.csv'
-csvpath = os.path.join(dir, analysis_dir, csvfilename)
+# load the cropsize
 
 with open(csvpath, 'rb') as csvfile:
     # CSV reader specifies delimiter and variable that holds contents
@@ -51,8 +62,8 @@ print(dict_list)
 from loci.plugins import BF
 from loci.plugins.in import ImporterOptions
 
-#for i in range(len(filelist)): 
-for i in range(1):
+for i in range(len(filelist)): 
+#for i in range(1):
 	
 	filename = filelist[i].replace(".nd2", "")
 	x_size = dict_list[filename][2]
@@ -62,17 +73,39 @@ for i in range(1):
 
 	print(filename, x_size, y_size, x, y)
 	
+	
+	outputpath = os.path.join(dir, analysis_dir, outputdir)	
+	
 	imps = BF.openImagePlus(fileabslist[i])
+	
 	for imp in imps:
 		imp.show()
 	
-	IJ.run(imp, "Specify...", "width=" + x_size + " height=" + y_size + " x=" + x + " y=" + y)
-	IJ.run(imp, "Duplicate...", "duplicate channels=1")
+		# run macro
+		IJ.run(imp, "Specify...", "width=" + x_size + " height=" + y_size + " x=" + x + " y=" + y)
 	
-	#imp = IJ.openImage(filelist[i])
 	
-
-
+		# save c1 image ------------------------------------------
+		IJ.run(imp, "Duplicate...", "duplicate channels=1")
+		imp_c1 = IJ.getImage()
+		fs = FileSaver(imp_c1)
+		filename = imp.title.replace('.nd2', '') + '_c1' + '.tif'
+		FileSaverCheck(outputpath, filename)
+		imp_c1.close()
+	
+		# save c2 image ------------------------------------------
+		
+		IJ.run(imp, "Duplicate...", "duplicate channels=2")
+		imp_c2 = IJ.getImage()
+		fs = FileSaver(imp_c2)
+		filename = imp.title.replace('.nd2', '') + '_c2' + '.tif'
+		FileSaverCheck(outputpath, filename)
+		imp_c2.close()
+		
+		imp.close()
+	
+	del imps
+	
 
 '''
 imp.close()
