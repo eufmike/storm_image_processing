@@ -77,7 +77,7 @@ print(inputfilelist)
 print(inputfileabslist)
 print(opfilelist_cbc_histo)
 
-bins  = np.linspace(-1.0, 1.0, num = 41)
+bins  = np.linspace(-1.0, 1.0, num = 21)
 print(bins)
 
 # %%
@@ -153,10 +153,10 @@ csvdatadir = 'csvdata_inference'
 outputplot = os.path.join(path, analysis_dir, csvdatadir, 'CBC_results', 'CBC_results.png')
 
 # create bins
-plot_bins = np.linspace(-0.975, 0.975, num = 40)
+plot_bins = np.linspace(-0.975, 0.975, num = 20)
 print(plot_bins)
 
-width = 0.020
+width = 0.040
 fig = plt.figure(figsize = (12,5), dpi = 100)
 ax = fig.add_subplot(111)
 
@@ -165,6 +165,6 @@ data_ko = data_grouped_2.loc[data_grouped_2['group'] == 'knockout']
 ax.bar(plot_bins - width/2, data_wt['id']['average'], width, yerr=data_wt['id']['sem'], capsize=2)
 ax.bar(plot_bins + width/2, data_ko['id']['average'], width, yerr=data_ko['id']['sem'], capsize=2)
 
-ax.set_xlim(-1, 1)
+ax.set_xlim(-1.1, 1.1)
 
 fig.savefig(outputplot)
