@@ -11,7 +11,7 @@ print(inputpath)
 
 # define output folders
 outputfolder = 'spacial_test'
-outputdata = 'datalocalL'
+outputdata = 'datalocalL_test'
 outputbi = 'binarylocalL'
 
 outputdatapath = file.path(path, analysis_dir, outputfolder, outputdata)
@@ -27,7 +27,7 @@ x_start = dead_pixel * 160
 x_end = (128 - dead_pixel) * 160
 y_start = dead_pixel * 160
 y_end = (128 - dead_pixel) * 160
-rvalue = 1000
+rvalue = 50
 
 # process data
 for (i in 1:length(filelist)){
@@ -35,21 +35,24 @@ for (i in 1:length(filelist)){
         filename <- filelist[i]
         filepath <- file.path(inputpath, filename)
         data <- read.csv(file = filepath)
-        
-        data <- data[1:4000, ]
+        print(nrow(data))
+        set.seed(1947)
+        sample_row <- sample(1:nrow(data), 7000)
+        # print(sample_row)
+        print(length(sample_row))
+        data <- data[sample_row, ]
         
         # create pattern
         pattern <- ppp(data$x..nm., data$y..nm., c(x_start, x_end), c(y_start, y_end))
         
         # run analysis for localL, 
-        L_50 <- localL(pattern, rvalue = rvalue)
+        L_50 <- localL(pattern, correction = "best", rvalue = rvalue)
         print('done')
         
         x <- pattern$x
         y <- pattern$y
         z <- L_50
-        
-        
+
         outputdata_temp <- data.frame(x, y, z)
         
         outputcsvpath_tmp <- file.path(outputdatapath, filename)
