@@ -27,4 +27,22 @@ a = wm.getWindow('ThunderSTORM: results')
 a.close()
 '''
 
+# %%
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import numpy as np
+
+img = mpimg.imread('kodim23.png')
+print(img.shape)
+
+lum_img = img[:, :, 0]
+imgplot = plt.imshow(lum_img, cmap="gray")
+plt.colorbar()
+
+# %%
+plt.hist(lum_img.ravel(), bins=256, range=(0.0, 1.0), fc='k', ec='k')
+
+# %%
+imgplot = plt.imshow(lum_img, cmap="gray", clim= (0.2, 0.7))
+plt.colorbar()
 

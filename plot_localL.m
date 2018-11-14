@@ -16,6 +16,7 @@ filenames_nodot = filenames(nodot);
 display(filenames_nodot);
 
 for n = 1:length(filenames_nodot)
+%% for n = 1
     filename = filenames_nodot(n);
     inputfiledir = char(fullfile(folder_path, input_folder, filename));   
     
@@ -25,14 +26,15 @@ for n = 1:length(filenames_nodot)
     x = M(:, 1);
     y = M(:, 2);
     z = M(:, 3);
-    [xg, yg] = meshgrid(0 : 20 : 20480);
-    zg = griddata(x,y,z,xg,yg,'v4');
+    [xg, yg] = meshgrid(10 : 20 : 20480);
+    zg = griddata(x,y,z,xg,yg,'v4');    
+    % zg_2 = griddata(x,y,z,xg,yg,'linear');
     
     outputfiledir = char(fullfile(folder_path, output_folder, filename));
     csvwrite(outputfiledir, zg);
     
     % contourf(xg,yg,zg, 20);
     
-    clear M xg zg x t z;
+    clear M xg yg zg x t z;
 end
 
