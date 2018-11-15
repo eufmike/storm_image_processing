@@ -110,10 +110,9 @@ for directory, dir_names, file_names in os.walk(inputfilepath):
 print(filelist)
 print(fileabslist)
 
-
-
 # %%
 from scipy import stats
+from PIL import Image
 
 for i in range(len(filelist)):
     filepath = fileabslist[i]
@@ -157,7 +156,13 @@ for i in range(len(filelist)):
     plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0)
     plt.savefig('test.tif')
     
+    data_threshold = data_2
+    data_threshold[data_threshold > 78] = 255
+    data_threshold[data_threshold <= 78] = 0
+    data_threshold.astype(int)
+    print(data_threshold)
     
-
+    img = Image.fromarray(data_threshold)
+    img.save('test_threshold.tif')
 
     break
