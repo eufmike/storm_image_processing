@@ -1,3 +1,4 @@
+# For ImageJ/Fiji
 from ij import IJ, ImagePlus, 'plugin.frame'
 import inspect
 import pprint as pp

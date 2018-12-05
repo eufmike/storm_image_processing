@@ -1,3 +1,4 @@
+# For ImageJ/Fiji
 import sys
 # print(sys.version)
 import os

@@ -1,4 +1,4 @@
-
+# For ImageJ/Fiji
 # prepare environment ------------------------------------
 from ij.io import FileSaver
 from ij import IJ
