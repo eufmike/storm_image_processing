@@ -7,14 +7,18 @@ import re
 
 # %%
 # histogram for photon count
-# create input/output path
+# create input path
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
+analysis_dir = 'analysis_012019'
 csvdatadir = 'csvdata'
 inputfilepath = os.path.join(path, analysis_dir, csvdatadir)
 
+# create output path
 outputfolder = 'csvdata_inference'
 histo = 'histogram'
+outputfilepath = os.path.join(path, analysis_dir, outputfolder, histo)
+if not os.path.exists(outputfilepath):
+		os.makedirs(outputfilepath)
 
 inputfilelist = []
 inputfileabslist = []
@@ -27,7 +31,7 @@ for directory, dir_names, file_names in os.walk(inputfilepath):
             inputfilelist.append(file_name)
             inputfileabslist.append(inputfilepath_tmp)
             filenamepng = file_name.replace('.csv', '.png')
-            filepath_png = os.path.join(path, analysis_dir, outputfolder, histo, filenamepng)
+            filepath_png = os.path.join(outputfilepath, filenamepng)
             opfilelist_cbc_histo.append(filepath_png)
 
 print(inputfilelist)

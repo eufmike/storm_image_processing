@@ -1,12 +1,14 @@
-# slice the csv according to the frame size
 
+# %%
+# slice the csv according to the frame size
 import os, sys
 import pandas as pd
 # from tkinter import *
 
+# create input path
 # load the csv file
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
+analysis_dir = 'analysis_012019'
 csvdatadir = 'csvdata'
 filepath = os.path.join(path, analysis_dir, csvdatadir)
 
@@ -22,13 +24,11 @@ for directory, dir_names, file_names in os.walk(filepath):
 print(filelist)
 print(fileabslist)
 
-# define the range of time frame
-frame_start = 5000
-frame_end = 10001
-
-# define output folder
-output_dir = 'csvdata_sliced'
-outputfilepath = os.path.join(path, analysis_dir, output_dir)
+# create output path
+outputfolder = 'csvdata_sliced'
+outputfilepath = os.path.join(path, analysis_dir, outputfolder)
+if not os.path.exists(outputfilepath):
+		os.makedirs(outputfilepath)
 
 outputfilelist = []
 outputfileabslist = []
@@ -40,6 +40,12 @@ for directory, dir_names, file_names in os.walk(filepath):
 			outputfileabslist.append(filepath_tmp)
 
 print(outputfileabslist)
+
+
+# %%
+# define the range of time frame
+frame_start = 5000
+frame_end = 10001
 
 # slice the csv file
 #for i in range(1):
