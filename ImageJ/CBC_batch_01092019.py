@@ -42,20 +42,23 @@ for directory, dir_names, file_names in os.walk(filenamepath):
 			outputfilepath_tmp = outputfilepath_tmp.replace('.nd2', '.csv')
 			outputfilelist.append(outputfilepath_tmp)
 
-#print(inputfilelist)
-#print(outputfilelist)
+# print(inputfilelist)
+print(outputfilelist)
 
 for i in range(len(inputfilelist)):
 # for i in range(1):
+	i = 1
 	for j in range(areacount):
+		j = 2
 		c1_filename = inputfilelist[i].replace('.nd2', '_' + str(j+1) + '_c1.csv')
 		c2_filename = inputfilelist[i].replace('.nd2', '_' + str(j+1) + '_c2.csv')
-		# print(outputfilelist[i])
+		outputfilename = outputfilelist[i].replace('.csv', '_' + str(j+1) + '.csv')
+		print(outputfilename)
 		
 		IJ.run("Import results", "filepath=[" + c1_filename + "] fileformat=[CSV (comma separated)] livepreview=false rawimagestack= startingframe=1 append=false")
 		IJ.run("Import ground-truth", "filepath=[" + c2_filename + "] fileformat=[CSV (comma separated)] startingframe=1 append=false")
 		IJ.run("CBC", "addcbc=true radiusstep=50 addnncount=true channel1=[Results table] channel2=[Ground-truth table] stepcount=10 dimensions=2D addnndist=true")
-		IJ.run("Export ground-truth", ("filepath=[" + outputfilelist[i] + "] "
+		IJ.run("Export ground-truth", ("filepath=[" + outputfilename + "] "
 				"fileformat=[CSV (comma separated)] "
 				"sigma=true chi2=true offset=true "
 				"cbc=true " 
@@ -73,11 +76,10 @@ for i in range(len(inputfilelist)):
 				"neighbors_in_dist_400=true "
 				"neighbors_in_dist_450=true "
 				"neighbors_in_dist_500=true "))
-		
-		
-		
+				
 		imp = IJ.getImage()
 		imp.close()
 		imp = IJ.getImage()
 		imp.close()
-	
+		break
+	break

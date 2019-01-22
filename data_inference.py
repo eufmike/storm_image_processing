@@ -39,8 +39,8 @@ print(inputfileabslist)
 print(opfilelist_cbc_histo)
 
 # %%
-#for i in range(len(inputfilelist)):
-for i in range(len(inputfilelist)-1, len(inputfilelist)):
+for i in range(len(inputfilelist)):
+# for i in range(len(inputfilelist)-1, len(inputfilelist)):
     filepath = inputfileabslist[i]
     print(filepath)
     data = pd.read_csv(filepath, header=0)
