@@ -76,23 +76,6 @@ def dircheck(targetpaths):
 			if not os.path.exists(path):
 				os.makedirs(path)
 
-def listfiles(path, extension = None):
-	"""
-	
-	"""
-	filelist = []
-	fileabslist = []
-	for directory, dir_names, file_names in os.walk(path):
-		# print(file_names)
-		
-		for file_name in file_names:
-			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
-				file_name_base = file_name.replace(extension, '')
-				filepath_tmp =  os.path.join(directory, file_name)
-				fileabslist.append(filepath_tmp)
-	
-	return fileabslist
-
 def getprocessedimg(op_dir, pattern = r'(.+?).'):
 	"""
 	NOT USING
@@ -115,6 +98,22 @@ def getprocessedimg(op_dir, pattern = r'(.+?).'):
 	
 	return (processed_img)
 
+def listfiles(path, extension = None):
+	"""
+	
+	"""
+	filelist = []
+	fileabslist = []
+	for directory, dir_names, file_names in os.walk(path):
+		# print(file_names)
+		
+		for file_name in file_names:
+			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
+				file_name_base = file_name.replace(extension, '')
+				filepath_tmp =  os.path.join(directory, file_name)
+				fileabslist.append(filepath_tmp)
+	
+	return fileabslist
 	
 # def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv', pattern = r'(.+?).'):
 def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
@@ -164,7 +163,8 @@ def garbagecollect(iteration = 3):
 def run_script(path=path):
 
 	import gc
-
+	path = str(path)
+	
 	# Prepare workspace ========================= #
 	print('Preparing ...')
 	# log.info('Preparing ...')
@@ -179,7 +179,6 @@ def run_script(path=path):
 	file_par = 'par'
 
 	# create temp folder
-	path = str(path)
 	path_temp = os.path.join(path, dir_output, dir_temp)
 	pathlist.append(path_temp)
 
@@ -218,7 +217,7 @@ def run_script(path=path):
 	# Create img list for processing ============ #
 	# create a file list for all images
 
-	# return the processed img
+	# return the pending files
 	src_ext = '.nd2'
 	pendingfllist, pendingpathlist_input, pendingpathlist_output = getpendinglist(path_srcimg, path_imgintensity, src_ext = src_ext)
 
