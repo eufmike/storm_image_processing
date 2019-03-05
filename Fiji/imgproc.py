@@ -1,11 +1,33 @@
 #@ UIService uiService
 #@ LogService log
-#@ String(label="Name of the Analysis", value = "analysis_20190305") dir_output
-#@ File(label="Select a directory", style="directory", value="/Users/mike_data_analysis/Documents/projects/STORM_imaging") path
-#@ String(label="Folder for raw images", value = "testdata") dir_srcimg
+#@ String(label="Name of the Analysis", value = "analysis_20190305", persist=false) dir_output
+#@ File(label="Select a directory", style="directory", value="/Users/mike_data_analysis/Documents/projects/STORM_imaging", persist=false) path
+#@ String(label="Folder for raw images", value = "testdata", persist=false) dir_srcimg
 
 print('Script Starts')
+print('Importing modules ...')
 
+# Import ImageJ/Fiji package
+import sys
+import os
+import re
+import csv
+import gc
+import time
+from ij import IJ
+from ij import plugin
+from ij import gui
+from ij.io import FileSaver
+from ij import WindowManager as wm
+from ij.process import ImageStatistics as IS 
+
+# Import JAVA modules
+import java.awt.Color as Color
+import java.lang.System.gc as javagc
+
+# Import Bio-Formats
+from loci.plugins import BF
+from loci.plugins.in import ImporterOptions
 
 # Functions Section Begins ----------------------------------------------------- #
 print('Loading functions ...')
@@ -139,31 +161,9 @@ def garbagecollect(iteration = 3):
 # Functions Section Ends ----------------------------------------------------- #
 
 # STORM Image Analysis ------------------------------------------------------- #
-def run_script():
+def run_script(path=path):
 
-	print('Importing modules ...')
-
-	# Import ImageJ/Fiji package
-	import sys
-	import os
-	import re
-	import csv
 	import gc
-	import time
-	from ij import IJ
-	from ij import plugin
-	from ij import gui
-	from ij.io import FileSaver
-	from ij import WindowManager as wm
-	from ij.process import ImageStatistics as IS 
-	
-	# Import JAVA modules
-	import java.awt.Color as Color
-	import java.lang.System.gc as javagc
-	
-	# Import Bio-Formats
-	from loci.plugins import BF
-	from loci.plugins.in import ImporterOptions
 
 	# Prepare workspace ========================= #
 	print('Preparing ...')
@@ -397,4 +397,8 @@ def run_script():
 	return
 
 if __name__ in ['__builtin__','__main__']:
-    run_script()
+	run_script()
+	
+	# quit script after running the script
+	from java.lang import System
+	System.exit(0)
