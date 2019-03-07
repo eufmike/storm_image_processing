@@ -2,7 +2,7 @@
 #@ LogService log
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
 #@ String(label="Folder for raw images", value = "testdata", persist=false) dir_srcimg
-#@ String(label="Folder for raw images", value = "tstorm_testdata", persist=false) dir_preproimg
+#@ String(label="Folder for raw images", value = "preproimg", persist=false) dir_preproimg
 #@ String(label="Folder for output", value = "analysis_20190307", persist=false) dir_output
 
 print('Script Starts')
@@ -148,8 +148,9 @@ def tstormanlysis(inputfile, csvdatapath, dcpath, hppath, imwidth, imheight):
 	resultwd = wm.getWindow('ThunderSTORM: results')
 
 	# run drift correction
-	IJ.run(inputfile, "Show results table", ("action=drift path=" + dcpath + " magnification=5.0 "
+	IJ.run(inputfile, "Show results table", ("action=drift path=[" + dcpath + "] magnification=5.0 "
 		"method=[Cross correlation] save=true steps=10 showcorrelations=false"))
+
 	driftwd = wm.getWindow('Drift')
 	
 	IJ.run(inputfile, "Show results table", "action=density neighbors=5 radius=50.0 dimensions=2D")
