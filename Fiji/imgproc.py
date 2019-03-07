@@ -1,7 +1,7 @@
 #@ UIService uiService
 #@ LogService log
-#@ String(label="Name of the Analysis", value = "analysis_20190305", persist=false) dir_output
-#@ File(label="Select a directory", style="directory", value="/Users/mike_data_analysis/Documents/projects/STORM_imaging", persist=false) path
+#@ String(label="Name of the Analysis", value = "analysis_20190307", persist=false) dir_output
+#@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
 #@ String(label="Folder for raw images", value = "testdata", persist=false) dir_srcimg
 
 print('Script Starts')
