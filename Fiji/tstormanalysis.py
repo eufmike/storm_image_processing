@@ -71,7 +71,7 @@ def dircheck(targetpaths):
 	
 	# print(type(targetpaths))
 	if type(targetpaths) is unicode: 
-		print(os.path.exists(targetpaths))
+		# print(os.path.exists(targetpaths))
 		if not os.path.exists(targetpaths):
 			os.makedirs(targetpaths)
 	elif type(targetpaths) is list: 
@@ -102,11 +102,7 @@ def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
 	"""
 	
 	srclist = listfiles(src_dir, src_ext)
-	print('srclist')
-	print(srclist)
 	oplist = listfiles(op_dir, op_ext)
-	print('oplist')
-	print(oplist)
 
 	oplist_basename = []
 	for i in oplist:
@@ -185,7 +181,7 @@ def run_script(path=path):
 	
 	import gc
 	path = str(path)
-
+	print('Preparing ...')
 	# load image
 	# path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
 	# dir_srcimg = 'testdata'
@@ -204,8 +200,8 @@ def run_script(path=path):
 	# create input path
 	path_srcimg = os.path.join(path, dir_output, dir_preprocessing, dir_preproimg)
 	path_imgstat = os.path.join(path, dir_output, dir_preprocessing, dir_imginfo, file_imgstat)
-	print("path_srcimg")
-	print(path_srcimg)
+	# print("path_srcimg")
+	# print(path_srcimg)
 	
 	# output dir
 	dir_tstorm = 'tstorm'
@@ -256,12 +252,12 @@ def run_script(path=path):
 		pendingpathlist_op_dc = pendingpathlist_op_dc + dc_tmp
 		pendingpathlist_op_hp = pendingpathlist_op_hp + hp_tmp
 		
-	print(pendingfllist)
 	print(pendingpathlist_ip)
+	'''
 	print(pendingpathlist_op_csv)
 	print(pendingpathlist_op_dc)
 	print(pendingpathlist_op_hp)
-
+	'''
 	
 	img_stat = {}
 	# read stat.csv exist
@@ -279,7 +275,7 @@ def run_script(path=path):
 				"sizebytes": row[7]
 			}
 	
-	print(img_stat)
+	# print(img_stat)
 
 
 	for i in range(len(pendingfllist)):
@@ -290,10 +286,12 @@ def run_script(path=path):
 		opdcfile = pendingpathlist_op_dc[i]
 		ophpfile = pendingpathlist_op_hp[i]
 		print("Start Analysis: {}".format(ipfilename))
+		'''
 		print(opcsvfile)
 		print(opdcfile)
 		print(ophpfile)
-
+		'''
+		
 		# load stat
 		stattmp = img_stat[imgname]
 
@@ -316,7 +314,7 @@ def run_script(path=path):
 
 	import gc
 	gc.collect()
-
+	
 	return
 
 if __name__ in ['__builtin__','__main__']:
