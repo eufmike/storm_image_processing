@@ -2,9 +2,9 @@
 #@ LogService log
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
 #@ String(label="Folder for raw images", value = "testdata", persist=false) dir_srcimg
-#@ String(label="Folder for raw images", value = "preproimg", persist=false) dir_preproimg
+#@ String(label="Folder for tif images", value = "preproimg", persist=false) dir_preproimg
 #@ String(label="Folder for output", value = "analysis_20190307", persist=false) dir_output
-
+#@ Boolean(label="Batchmode", value=true, persist=true) batchmodeop
 print('Script Starts')
 print('Importing modules ...')
 
@@ -21,6 +21,7 @@ from ij import gui
 from ij.io import FileSaver
 from ij import WindowManager as wm
 from ij.process import ImageStatistics as IS 
+from ij.macro import Interpreter
 
 # Import JAVA modules
 import java.awt.Color as Color
@@ -187,7 +188,8 @@ def run_script(path=path):
 	# dir_srcimg = 'testdata'
 	dir_src = 'resource'
 	# dir_output = 'analysis_20190122'
-	
+	if batchmodeop:
+		Interpreter.batchMode = True
 	# create input path
 	# input dir
 	dir_preprocessing = 'preprocessing'
@@ -311,7 +313,8 @@ def run_script(path=path):
 		gc.collect()
 
 	# time.sleep(3)
-
+	if batchmodeop:
+		Interpreter.batchMode = False
 	import gc
 	gc.collect()
 	
