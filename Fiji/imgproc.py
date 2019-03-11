@@ -1,8 +1,8 @@
 #@ UIService uiService
 #@ LogService log
-#@ String(label="Name of the Analysis", value = "analysis_20190307", persist=false) dir_output
+#@ String(label="Name of the Analysis", value = "analysis_20190308", persist=false) dir_output
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
-#@ String(label="Folder for raw images", value = "testdata", persist=false) dir_srcimg
+#@ String(label="Folder for raw images", value = "03_testdata", persist=false) dir_srcimg
 
 print('Script Starts')
 print('Importing modules ...')
@@ -225,45 +225,48 @@ def run_script(path=path):
 	# log.info(pendingfllist)
 
 	# Processing start ========================== #
-
-	pendingfllist_pre = []
-	processed_filename = []
-	list_xsize = []
-	list_ysize = []
-	list_nSlices = []
-	list_nFrames = []
-	list_nChannels = []
-	list_sizebytes = []
-
-	# check if stat .csv file exist
-	if os.path.exists(path_imgstat):
-		with open(path_imgstat, 'rb') as csvfile:
-			csvreader = csv.reader(csvfile, delimiter=',')
-			csv_header = next(csvreader)
-			for row in csvreader:
-				pendingfllist_pre.append(row[0])
-				processed_filename.append(row[1])
-				list_xsize.append(row[2])
-				list_ysize.append(row[3])
-				list_nSlices.append(row[4])
-				list_nFrames.append(row[5])
-				list_nChannels.append(row[6])
-				list_sizebytes.append(row[7])
 				
 	# load and crop the image
 	for i in range(len(pendingfllist)):
 	# for i in range(2):
 		print(pendingfllist[i])
 		
+		# check if stat .csv file exist
+		pendingfllist_pre = []
+		processed_filename = []
+		list_xsize = []
+		list_ysize = []
+		list_nSlices = []
+		list_nFrames = []
+		list_nChannels = []
+		list_sizebytes = []
+		
+		if os.path.exists(path_imgstat):
+			with open(path_imgstat, 'rb') as csvfile:
+				csvreader = csv.reader(csvfile, delimiter=',')
+				csv_header = next(csvreader)
+				for row in csvreader:
+					pendingfllist_pre.append(row[0])
+					processed_filename.append(row[1])
+					list_xsize.append(row[2])
+					list_ysize.append(row[3])
+					list_nSlices.append(row[4])
+					list_nFrames.append(row[5])
+					list_nChannels.append(row[6])
+					list_sizebytes.append(row[7])
+
+		# load image
 		imps = BF.openImagePlus(pendingpathlist_input[i])
 		ipflbasename = pendingfllist[i]
 		pendingfllist_pre.append(pendingfllist[i])
+		
 		
 		for imp in imps:
 			imp.show()
 		
 		imp_main = IJ.getImage()
-		
+		# Save average intensity  ===================== #
+		processed_filename.append(imp_main.title)
 		# Save img metadata ========================== #
 		print('Save image metadata...')
 		# log.info('Save image metadata...')
@@ -299,6 +302,13 @@ def run_script(path=path):
 		list_nFrames.append(img_nFrames)
 		list_nChannels.append(img_nChannels)
 		list_sizebytes.append(img_sizebytes/(1024*1024))
+		
+		with open(path_imgstat, 'wb') as csvfile:
+			csvwriter = csv.writer(csvfile, delimiter=",")
+			csvwriter.writerow(['image_name', 'ip_file_name','xSize', 'ySize', 'nSlices', 'nFrames', 'nChannels', 'size_MB'])
+			for j in range(len(list_xsize)):
+				csvwriter.writerow([pendingfllist_pre[j], processed_filename[j], list_xsize[j], list_ysize[j], \
+							list_nSlices[j], list_nFrames[j], list_nChannels[j], list_sizebytes[j]])
 
 		# Print information =========================== #
 		# return the title of the window (optional)
@@ -311,8 +321,7 @@ def run_script(path=path):
 		# log.info('SizeC: {}'.format(img_nChannels))
 		# log.info('Size in Bytes: {}'.format(img_sizebytes))
 
-		# Save average intensity  ===================== #
-		processed_filename.append(imp_main.title)
+		
 		# define the size of center ROI 
 		roi = [(img_x/2) - 64, (img_y/2) - 64, 128, 128]
 		crop_roi = gui.Roi(roi[0], roi[1], roi[2], roi[3])
@@ -376,13 +385,6 @@ def run_script(path=path):
 		
 	print('Saving image stats ...')
 	# log.info('Saving image stats ...')
-
-	with open(path_imgstat, 'wb') as csvfile:
-		csvwriter = csv.writer(csvfile, delimiter=",")
-		csvwriter.writerow(['image_name', 'ip_file_name','xSize', 'ySize', 'nSlices', 'nFrames', 'nChannels', 'size_MB'])
-		for i in range(len(list_xsize)):
-			csvwriter.writerow([pendingfllist_pre[i], processed_filename[i], list_xsize[i], list_ysize[i], \
-						list_nSlices[i], list_nFrames[i], list_nChannels[i], list_sizebytes[i]])
 
 
 	print("Script Ends ...")
