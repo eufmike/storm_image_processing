@@ -3,23 +3,37 @@ library(ggplot2)
 
 # define input folders
 path <- '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
-inputfolder = 'csvdata_sliced'
+analysis_dir = 'analysis_20190308'
+subfolder = 'tstorm'
+inputfolder = 'csvdata_crop'
 # create input path
-inputpath <- file.path(path, analysis_dir, inputfolder)
+inputpath <- file.path(path, analysis_dir, subfolder, inputfolder)
 print(inputpath)
 
 # define output folders
 outputfolder = 'spacial_test'
-outputdata = 'data'
-outputbi = 'binaryfv_K'
+outputdata = 'datalocalL_test'
+outputbi = 'binarylocalL'
 
 outputdatapath = file.path(path, analysis_dir, outputfolder, outputdata)
 outputbipath = file.path(path, analysis_dir, outputfolder, outputbi)
 
+# channel count
+nchannel = 2
+
 # create filelist
 filelist <- list.files(inputpath)
 print(filelist)
+pathlist <- vector()
+for (c in nchannel){
+        filelist_temp <- list.files(file.path(inputpath, c))
+        
+        pathlist_temp = file.path(inputpath, c, filelist_temp)
+        pathlist <- c(pathlist, pathlist_temp)
+        
+}
+print(pathlist)
+print(basename(pathlist))
 
 # define region of interest
 dead_pixel = 3
@@ -30,10 +44,10 @@ y_end = (128 - dead_pixel) * 160
 rmax = 3000
 
 # process data
-for (i in 1:length(filelist)){
+for (i in 1:length(pathlist)){
 # for(i in c(1)){
-        filename <- filelist[i]
-        filepath <- file.path(inputpath, filename)
+        filepath <- pathlist[i]
+        filename <- basename(pathlist[i])
         data <- read.csv(file = filepath)
         
         # create pattern
