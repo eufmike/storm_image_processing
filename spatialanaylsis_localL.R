@@ -3,10 +3,11 @@ library(ggplot2)
 
 # define input folders
 path <- '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
-inputfolder = 'csvdata_sliced'
+analysis_dir = 'analysis_20190308'
+subfolder = 'tstorm'
+inputfolder = 'csvdata_crop'
 # create input path
-inputpath <- file.path(path, analysis_dir, inputfolder)
+inputpath <- file.path(path, analysis_dir, subfolder, inputfolder)
 print(inputpath)
 
 # define output folders
@@ -17,23 +18,40 @@ outputbi = 'binarylocalL'
 outputdatapath = file.path(path, analysis_dir, outputfolder, outputdata)
 outputbipath = file.path(path, analysis_dir, outputfolder, outputbi)
 
+# channel count
+nchannel = 2
+
 # create filelist
 filelist <- list.files(inputpath)
 print(filelist)
+pathlist <- vector()
+for (c in nchannel){
+        filelist_temp <- list.files(file.path(inputpath, c))
+        
+        pathlist_temp = file.path(inputpath, c, filelist_temp)
+        pathlist <- c(pathlist, pathlist_temp)
+        
+}
+print(pathlist)
+print(basename(pathlist))
 
+###!!!!!!!!!!!!!!!!offset required!!!!!!!!!!!!!!!!!!######
 # define region of interest
+x_frame_size = 30
+y_frame_size = 30
 dead_pixel = 3
 x_start = dead_pixel * 160
-x_end = (128 - dead_pixel) * 160
+x_end = (x_frame_size - dead_pixel) * 160
 y_start = dead_pixel * 160
-y_end = (128 - dead_pixel) * 160
+y_end = (y_frame_size - dead_pixel) * 160
 rvalue = 50
 
 # process data
-for (i in 1:length(filelist)){
+for (i in 1:length(pathlist)){
 # for(i in c(1)){
-        filename <- filelist[i]
-        filepath <- file.path(inputpath, filename)
+        filepath <- pathlist[i]
+        filename <- basename(pathlist[i])
+        
         data <- read.csv(file = filepath)
         print(nrow(data))
         set.seed(1947)
