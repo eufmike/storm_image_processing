@@ -92,15 +92,26 @@ for i in range(len(filelist)):
     data = pd.read_csv(filepath, header=0)
     
     print(data)
-    
-    fig = plt.figure()
+
+    fig, axes = plt.subplots()
     plt.plot(data['r'], data['K_r'])
     fig.savefig(outputfilelist_K[i])
-    
-    fig = plt.figure()
+    axes.set_xlim(0, 2500)
+    plt.close()
+
+    fig, axes = plt.subplots()
     plt.plot(data['r'], data['L_r'])
     fig.savefig(outputfilelist_L[i])
+    axes.set_xlim(0, 2500)
+    plt.close()
 
-    fig = plt.figure()
+    fig, axes = plt.subplots()
     plt.plot(data['r'], data['H_r'])
     fig.savefig(outputfilelist_H[i])
+    axes.set_xlim(0, 2500)
+    plt.close()
+
+    
+
+# %%
+print(1+1)
