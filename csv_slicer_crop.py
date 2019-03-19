@@ -92,23 +92,6 @@ for i in range(nchannel):
 	dir_for_check.append(dir_tmp)
 dircheck(dir_for_check)
 
-# %%
-'''
-# prepare input file list
-pendingfllist = []
-pendingpathlist_input = []
-pendingpathlist_output = []
-for i in range(nchannel):
-	src_dir = os.path.join(ip_path, str(i+1))
-	op_dir = os.path.join(op_path, str(i+1))
-	pendingfllist_tmp, pendingpathlist_input_tmp, pendingpathlist_output_tmp = getpendinglist(src_dir, op_dir, src_ext = '.csv', op_ext = '.csv')
-	pendingfllist = pendingfllist + pendingfllist_tmp
-	pendingpathlist_input = pendingpathlist_input + pendingpathlist_input_tmp
-	pendingpathlist_output = pendingpathlist_output + pendingpathlist_output_tmp
-# print(pendingfllist)
-print(pendingpathlist_input)
-print(pendingpathlist_output)
-'''
 
 # %%
 # load crop data
