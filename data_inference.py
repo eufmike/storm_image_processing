@@ -9,7 +9,7 @@ import re
 # histogram for photon count
 # create input path
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_012019'
+analysis_dir = 'analysis_20190308'
 csvdatadir = 'csvdata'
 inputfilepath = os.path.join(path, analysis_dir, csvdatadir)
 
@@ -56,9 +56,10 @@ for i in range(len(inputfilelist)):
 # %%
 # CBC trend 
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
+analysis_dir = 'analysis_20190308'
+st_dir = 'spacial_test'
 csvdatadir = 'CBC_results'
-inputfilepath = os.path.join(path, analysis_dir, csvdatadir)
+inputfilepath = os.path.join(path, analysis_dir, st_dir, csvdatadir)
 
 outputfolder = 'csvdata_inference'
 CBC_histo = 'CBC_histogram'
@@ -129,9 +130,12 @@ for i in range(len(inputfilelist)):
     plt.xlim(-1, 1)
     fig.savefig(opfilelist_cbc_histo[i])
     '''
-    
+
+# %%
 print(data_all.shape)
 
+# %%
+display(data_all)
 # %%
 # CBC data
 # binning 
@@ -152,9 +156,10 @@ display(data_grouped_2)
 # %%
 # filename
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis'
+analysis_dir = 'analysis_20190308'
 csvdatadir = 'csvdata_inference'
 outputplot = os.path.join(path, analysis_dir, csvdatadir, 'CBC_results', 'CBC_results.png')
+print(outputplot)
 
 # create bins
 plot_bins = np.linspace(-0.975, 0.975, num = 20)
