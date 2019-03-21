@@ -37,34 +37,6 @@ from loci.plugins.in import ImporterOptions
 # Functions Section Begins ----------------------------------------------------- #
 print('Loading functions ...')
 # log.info('Loading functions ...')
-
-def filesavercheck(fs, outputdir, filename):
-	
-	"""
-	FileSaverCheck first check if the input folder exists, 
-	then check if the input file exists in the targer folder
-	
-	If the folder does not exist, it returns error message:
-	"Folder does not exist or it's not a folder!"
-	If the folder exists but the file also exists:
-	File exists! Not saving the image, would overwrite a file!"
-	Otherwise, it will save file and return message: 
-	"File saved successfully at given filepath"
-	 
-	Arguments:
-	outputdir: output directory
-	filename: input file with absolute path
-	"""
-	
-	if os.path.exists(outputdir) and os.path.isdir(outputdir):  
-  		print "folder exists:", outputdir
-  		filepath = os.path.join(outputdir, filename) # Operating System-specific  
-  		if os.path.exists(filepath):
-  			print "File exists! Not saving the image, would overwrite a file!"  
-  		elif fs.saveAsTiff(filepath):
-  			print "File saved successfully at ", filepath  
-	else:  
-  		print "Folder does not exist or it's not a folder!" 
   		
 def dircheck(targetpaths):
 	"""
@@ -117,48 +89,6 @@ def listfiles(path, extension = None):
 	
 	return {'filelist': filelist,
 			'fileabslist': fileabslist}
-	
-# def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv', pattern = r'(.+?).'):
-def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
-	"""
-	getpendinglist compares the files from src_dir and the accomplisjed file in op_dir, 
-	then creates a pending list of unprocessed image. 
-	"""
-	
-	srclist = listfiles(src_dir, src_ext)
-	oplist = listfiles(op_dir, op_ext)
-
-	oplist_basename = []
-	for i in oplist:
-		name = os.path.basename(i)
-		basename = os.path.splitext(name)[0]
-		oplist_basename.append(basename)
-	
-	pendingfllist = []
-	pendingpathlist_input = []
-	pendingpathlist_output = []
-	
-	for i in range(len(srclist)):
-		srcflname = os.path.basename(srclist[i])
-		srcflbasename = os.path.splitext(srcflname)[0]
-		
-		if not srcflbasename in oplist_basename:
-			pendingfllist.append(srcflbasename)
-			pendingpathlist_input.append(srclist[i])			
-			pendingpathlist_output.append(os.path.join(op_dir, srcflbasename + op_ext))
-			
-	return (pendingfllist, pendingpathlist_input, pendingpathlist_output)
-
-def getStatistics(imp):  
-	""" Return statistics for the given ImagePlus """  
-	options = IS.MEAN | IS.MEDIAN | IS.MIN_MAX
-	ip = imp.getProcessor()  
-	stats = IS.getStatistics(ip, options, imp.getCalibration())  
-	return stats.mean, stats.median, stats.min, stats.max  
-
-def garbagecollect(iteration = 3):
-	for i in range(iteration):
-		gc.collect()
 		
 # Functions Section Ends ----------------------------------------------------- #
 def run_script(path=path):
@@ -228,7 +158,8 @@ def run_script(path=path):
 		imp.close()
 		imp = IJ.getImage()
 		imp.close()
-		
+
+		break
 
 if __name__ in ['__builtin__','__main__']:
 	run_script()
