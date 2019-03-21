@@ -5,64 +5,149 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
+# Functions Section Begins ----------------------------------------------------- #
+def dircheck(targetpaths):
+	"""
+	dircheck checks the target folder and create the folder if it does not exist.
+	targetdirlist: list of folderpath
+	"""
+	# print(type(targetpaths))
+	if isinstance(targetpaths, str): 
+		print(os.path.exists(targetpaths))
+		if not os.path.exists(targetpaths):
+			os.makedirs(targetpaths)
+	elif isinstance(targetpaths, list): 
+		for path in targetpaths:
+			if not os.path.exists(path):
+				os.makedirs(path)
+
+def listfiles(path, extension = None):
+	filelist = []
+	fileabslist = []
+	for directory, dir_names, file_names in os.walk(path):
+		# print(file_names)
+		
+		for file_name in file_names:
+			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
+				filepath_tmp =  os.path.join(directory, file_name + extension)
+				filelist.append(file_name)
+				fileabslist.append(filepath_tmp)
+	
+	return {'filelist': filelist,
+			'fileabslist': fileabslist}               
+# Functions Section Ends ----------------------------------------------------- #
+
+nchannels = 2
+
 # %%
 # histogram for photon count
 # create input path
+dir_check = []
+
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
 analysis_dir = 'analysis_20190308'
-csvdatadir = 'csvdata'
-inputfilepath = os.path.join(path, analysis_dir, csvdatadir)
+tstorm_dir = 'tstorm'
+st_dir = 'spacial_test'
+stormcsv_dir = 'csvdata_crop'
+cbccsv_dir = 'CBC_results'
+stormcsv_path = os.path.join(path, analysis_dir, tstorm_dir, stormcsv_dir)
+cbccsv_path = os.path.join(path, analysis_dir, st_dir, cbccsv_dir)
+print(stormcsv_path)
 
 # create output path
-outputfolder = 'csvdata_inference'
-histo = 'histogram'
-outputfilepath = os.path.join(path, analysis_dir, outputfolder, histo)
-if not os.path.exists(outputfilepath):
-		os.makedirs(outputfilepath)
+photon_histo_dir = 'photons_hist'
+CBC_histo_dir = 'CBC_histogram'
+photon_histo_path = os.path.join(path, analysis_dir, st_dir, photon_histo_dir)
+CBC_histo_path = os.path.join(path, analysis_dir, st_dir, CBC_histo_dir)
+for c in range(nchannels):
+    dir_check.append(os.path.join(photon_histo_path, str(c+1)))
+    dir_check.append(os.path.join(CBC_histo_path, str(c+1)))
+
+print(photon_histo_path)
+
+# %%
+# check dir
+dircheck(dir_check)
 
 inputfilelist = []
 inputfileabslist = []
 opfilelist_cbc_histo = []
 
-for directory, dir_names, file_names in os.walk(inputfilepath):
-    for file_name in file_names:
-        if (not file_name.startswith('.')) & (file_name.endswith('.csv')):
-            inputfilepath_tmp = os.path.join(directory, file_name)
-            inputfilelist.append(file_name)
-            inputfileabslist.append(inputfilepath_tmp)
-            filenamepng = file_name.replace('.csv', '.png')
-            filepath_png = os.path.join(outputfilepath, filenamepng)
-            opfilelist_cbc_histo.append(filepath_png)
+for c in range(nchannels):
+    for directory, dir_names, file_names in os.walk(os.path.join(stormcsv_path, str(c+1))):
+        for file_name in file_names:
+            if (not file_name.startswith('.')) & (file_name.endswith('.csv')):
+                inputfilepath_tmp = os.path.join(directory, file_name)
+                # print(inputfilepath_tmp)
+                inputfilelist.append(file_name)
+                inputfileabslist.append(inputfilepath_tmp)
+                filenamepng = file_name.replace('.csv', '.png')
+                filepath_png = os.path.join(photon_histo_path, str(c+1), filenamepng)
+                opfilelist_cbc_histo.append(filepath_png)
 
 print(inputfilelist)
 print(inputfileabslist)
 print(opfilelist_cbc_histo)
 
 # %%
+# plot the histgram
 for i in range(len(inputfilelist)):
 # for i in range(len(inputfilelist)-1, len(inputfilelist)):
     filepath = inputfileabslist[i]
     print(filepath)
     data = pd.read_csv(filepath, header=0)
     data_sorted = data.sort_values(by = ['intensity [photon]'], ascending=False)
-    display(data_sorted.head(10))
+    # display(data_sorted.head(10))
 
     fig = plt.figure()
     plt.hist(data['intensity [photon]'], 100)
     plt.yscale('log')
     plt.grid(True)
     fig.savefig(opfilelist_cbc_histo[i])
+    plt.close()
 
 # %%
-# CBC trend 
-path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
-st_dir = 'spacial_test'
-csvdatadir = 'CBC_results'
-inputfilepath = os.path.join(path, analysis_dir, st_dir, csvdatadir)
+# Grouped by the channels and treatment ------------------------------------------ #
+filelist = {}
 
-outputfolder = 'csvdata_inference'
-CBC_histo = 'CBC_histogram'
+filenamelist = listfiles(os.path.join(stormcsv_path, '1'), '.csv')['filelist']
+filedir = ['ip_filename', 'ip_path']
+treatment = ['wildtype', 'knockout']
+channel = list(range(2))
+print(channel)
+
+# group the data by the treatment 
+for c in channel:
+    filelist[str(c+1)] = {}
+    for group in treatment:
+        filelist[str(c+1)][group] = {}    
+        
+        # create list
+        filelist_temp = []
+        for l in filenamelist: 
+            if group == 'wildtype':
+                x = re.search('(.*)_w{1}[0-9]{1}_(.*)', l)
+            else: 
+                x = re.search('(.*)_k{1}[0-9]{1}_(.*)', l) 
+            try: 
+                found = x.group(0)
+                filelist_temp.append(found)
+            except AttributeError:
+                found = ''
+
+        ip_filepath = []
+        
+        for f in filelist_temp: 
+            filepath_tmp =  os.path.join(stormcsv_path, str(c+1), f)
+            ip_filepath.append(filepath_tmp)
+
+        filelist[str(c+1)][group][filedir[0]] = filelist_temp
+        filelist[str(c+1)][group][filedir[1]] = ip_filepath
+
+print(filelist)
+# ----------------------------------------------------- #
+# %%
+# CBC trend 
 
 inputfilelist = []
 inputfileabslist = []

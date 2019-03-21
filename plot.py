@@ -90,6 +90,7 @@ channel = list(range(2))
 print(channel)
 
 # %%
+# group the data by the treatment 
 for c in channel:
     filelist[str(c+1)] = {}
     # print(filelist)
@@ -138,6 +139,7 @@ for c in channel:
 
 print(filelist)
 # %%
+# print keys of the dictionary
 for key, value in filelist.items() :
     print (key)
     for key2, value2 in filelist[key].items():
@@ -146,6 +148,8 @@ for key, value in filelist.items() :
             print(key3)
 
 # %%
+# plot the results from repliey's K, L and H
+# individual images for 
 variable = ['K_r', 'L_r', 'H_r']
 data_list = []
 for c in channel:
@@ -222,7 +226,6 @@ for c in channel:
         optotal_path
         plt.close()
 
-            
 
 print(data_x.reset_index()['r'])
 
