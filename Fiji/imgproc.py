@@ -20,6 +20,7 @@ from ij import gui
 from ij.io import FileSaver
 from ij import WindowManager as wm
 from ij.process import ImageStatistics as IS 
+from ij.macro import Interpreter
 
 # Import JAVA modules
 import java.awt.Color as Color
