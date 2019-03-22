@@ -173,12 +173,13 @@ for c in channel:
                 axes.set_xlim(0, 2500)
                 plt.close()
         
-        data_total = pd.concat(data_list, axis = 0)
+data_total = pd.concat(data_list, axis = 0)
 
 # %%
 print(data_total)
-
+print(data_total.shape)
 # %%
+# plot K_r, L_r and H_r in one single graph
 for c in channel:
     print(c)
     data_temp = data_total[data_total['channel'] == str(c+1)]
@@ -209,6 +210,7 @@ print(data_grouped_mean)
 data_grouped_sem = data_total.groupby(by = ['channel', 'group', 'r']).sem()
 print(data_grouped_sem)
 # %%
+# plot mean and SEM for K_r, L_r and H_r
 for c in channel:
     for var in variable:
         fig, axes = plt.subplots()

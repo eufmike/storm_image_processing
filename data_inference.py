@@ -68,7 +68,7 @@ print(photon_histo_path)
 # %%
 # check dir
 dircheck(dir_check)
-
+'''
 inputfilelist = []
 inputfileabslist = []
 opfilelist_cbc_histo = []
@@ -88,8 +88,9 @@ for c in range(nchannels):
 print(inputfilelist)
 print(inputfileabslist)
 print(opfilelist_cbc_histo)
-
+'''
 # %%
+'''
 # plot the histgram
 for i in range(len(inputfilelist)):
 # for i in range(len(inputfilelist)-1, len(inputfilelist)):
@@ -105,13 +106,13 @@ for i in range(len(inputfilelist)):
     plt.grid(True)
     fig.savefig(opfilelist_cbc_histo[i])
     plt.close()
-
+'''
 # %%
 # Grouped by the channels and treatment ------------------------------------------ #
 filelist = {}
 
 filenamelist = listfiles(os.path.join(stormcsv_path, '1'), '.csv')['filelist']
-filedir = ['ip_filename', 'ip_path']
+filedir = ['ip_filename', 'ip_path', 'op_intensity']
 treatment = ['wildtype', 'knockout']
 channel = list(range(2))
 print(channel)
@@ -136,15 +137,84 @@ for c in channel:
                 found = ''
 
         ip_filepath = []
-        
+        op_intensity_filepath = []
         for f in filelist_temp: 
             filepath_tmp =  os.path.join(stormcsv_path, str(c+1), f)
             ip_filepath.append(filepath_tmp)
 
+            filename_tmp_png = f.replace('.csv', '.png')
+            op_intensity_filepath_temp = os.path.join(photon_histo_path, str(c+1), filename_tmp_png)
+            op_intensity_filepath.append(op_intensity_filepath_temp)
+
         filelist[str(c+1)][group][filedir[0]] = filelist_temp
         filelist[str(c+1)][group][filedir[1]] = ip_filepath
+        filelist[str(c+1)][group][filedir[2]] = op_intensity_filepath
 
 print(filelist)
+# ----------------------------------------------------- #
+# %%
+data_list = []
+for c in channel:
+    for group in treatment:
+        for i in range(len(filelist[str(c+1)][group][filedir[0]])):
+        # for i in range(10):
+            filepath = filelist[str(c+1)][group][filedir[1]][i]
+            # print(filepath)
+            data = pd.read_csv(filepath, header=0, index_col = 0)
+            data['filename'] = filelist[str(c+1)][group][filedir[0]][i]
+            data['group'] = group
+            data['channel'] = str(c+1)
+            data_list.append(data)
+
+            # print(data)
+            fig = plt.figure()
+            plt.hist(data['intensity [photon]'], 100)
+            plt.yscale('log')
+            plt.grid(True)
+            opfilename = filelist[str(c+1)][group][filedir[2]][i]
+            print(opfilename)
+            fig.savefig(opfilename)
+            plt.close()
+
+data_total = pd.concat(data_list, axis = 0)
+
+
+# %%
+data_total = pd.DataFrame(data_total)
+display(data_total)
+# ----------------------------------------------------- #
+# %%
+for c in channel:
+    print(c)
+    data_temp = data_total[data_total['channel'] == str(c+1)]
+    #print(data_temp)
+    photon_max = max(data_temp['intensity [photon]'])
+    print(photon_max)
+    binsize = 1000
+    photon_bin_max = photon_max//binsize
+    print(photon_bin_max)
+    bin_list = list(range(0, (int(photon_bin_max) + 2) * binsize, binsize))
+    print(bin_list)
+    fig, axes = plt.subplots()
+    colors = ['red', 'blue']
+    
+    for m in range(len(treatment)):
+        for i in range(len(filelist[str(c+1)][treatment[m]][filedir[0]])):
+        # for i in range(10):
+            filename_tmp = filelist[str(c+1)][treatment[m]][filedir[0]][i]
+            # print(filename_tmp)
+            data_plot = data_temp[data_temp['filename'] == filename_tmp]
+            # print(data_plot)
+            plt.hist(data_plot['intensity [photon]'], bins= bin_list, histtype = 'step', color = colors[m], alpha = 0.2)
+            plt.yscale('log')
+            plt.xscale('log')
+        
+    fig.savefig(os.path.join(photon_histo_path, 'photon' + '_c' +  str(c+1) + '.png'))
+    axes.set_xlim(0, 2500)
+    plt.close()
+    
+    
+
 # ----------------------------------------------------- #
 # %%
 # CBC trend 
