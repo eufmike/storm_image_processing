@@ -74,9 +74,9 @@ def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
 # create input path
 # load the csv file
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190325'
+analysis_dir = 'analysis_20190308'
 analysis_subdir = 'tstorm'
-csvdata_dir = 'csvdata_sliced'
+csvdata_dir = 'csvdata_crop'
 nchannel = 2 
 crop_region = 3
 
@@ -84,7 +84,7 @@ ip_path = os.path.join(path, analysis_dir, analysis_subdir, csvdata_dir)
 
 # create output path
 dir_for_check = []
-op_dir = 'csvdata_crop'
+op_dir = 'csvdata_crop_th'
 op_path = os.path.join(path, analysis_dir, analysis_subdir, op_dir)
 dir_for_check.append(op_path)
 for i in range(nchannel):
@@ -120,7 +120,10 @@ print(df_cropdata.shape[0])
 # %%
 # slice the csv file
 #for i in range(1):
-
+threshold = {
+    '1': 10000,
+    '2': 15000,
+}
 for i in range(df_cropdata.shape[0]):
     imgname = df_cropdata['name'][i]
     x_min = df_cropdata['x_min_nm'][i]
@@ -134,7 +137,8 @@ for i in range(df_cropdata.shape[0]):
         data = pd.read_csv(path_csv_ip, header=0)
         data_sliced = data[(data['x [nm]'] >= x_min) & (data['x [nm]'] < x_max) & \
                             (data['y [nm]'] >= y_min) & (data['y [nm]'] < y_max)]
-                            
+        threshold_temp = threshold[str(j+1)]
+        data_sliced = data_sliced[(data['intensity [photon]'] > threshold_temp)]                    
         path_csv_op = os.path.join(op_path, str(j+1), imgname + '_r' + str(img_region) + '.csv')
         data_sliced.to_csv(path_csv_op, index = False)
         

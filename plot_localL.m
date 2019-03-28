@@ -1,26 +1,57 @@
 %% Define the path of folders
 close all;
-folder_path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis/spacial_test/';
-input_folder = 'datalocalL_test'; % specify the input folder
-output_folder = 'datalocalL_interpolation';
+folder_path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/';
+analysis_dir = 'analysis_20190308';
+st_dir = 'spacial_test';
+ip_dir = 'spacialdata_local'; % specify the input folder
+op_dir = 'spacialdata_local_int';
 % output_folder = 'raw_test_output'; % specify the output folder
 
-input = dir(fullfile(folder_path, input_folder));
-filenames = {input.name};
+% create path
+ip_path = fullfile(folder_path, analysis_dir, st_dir, ip_dir);
+op_path = fullfile(folder_path, analysis_dir, st_dir, op_dir);
 
-regexp_crit = '^[^.]+'; % the pattern of general expression
-rxResult = regexp(filenames, regexp_crit); % pick the string follow the rule
-nodot = (cellfun('isempty', rxResult)==0); % convert to logicals
-filenames_nodot = filenames(nodot);
+if ~exist(op_path)
+    mkdir(op_path);
+end
 
-display(filenames_nodot);
+input = dir(ip_path);
+filelist = {input.name};
+filelist = filelist(~ismember(filelist, {'.', '..'}));
+display(filelist);
 
-for n = 1:length(filenames_nodot)
-%% for n = 1
-    filename = filenames_nodot(n);
-    inputfiledir = char(fullfile(folder_path, input_folder, filename));   
+for i = 1: length(filelist)
+    path_tmp = fullfile(op_path, filelist{i})
+    mkdir(path_tmp)
+end
+
+
+ipfilelist = {};
+opfilelist = {};
+for i = 1:numel(filelist)
+    subfilelist_tmp = dir(fullfile(ip_path, filelist{i}, '*.csv'));
+    subfilelist_name = {subfilelist_tmp.name};
+    subfilelist_dir = {subfilelist_tmp.folder};
+    subfilelist_name = subfilelist_name(~ismember(subfilelist_name, {'.', '..'}));
+    subfilelist_dir = subfilelist_dir(~ismember(subfilelist_name, {'.', '..'}));
     
-    M = csvread(inputfiledir, 2);
+    display(size(subfilelist_name));
+    display(size(subfilelist_dir));
+    
+    ipfilelist = [ipfilelist, fullfile(subfilelist_dir, subfilelist_name)]
+    opfilelist = [opfilelist, fullfile(op_path, filelist{i}, subfilelist_name)]
+    
+end
+
+display(ipfilelist{1});
+display(opfilelist{1});
+
+
+%for n = 1:length(ipfilelist)
+for n = 1
+    ippath_tmp = char(ipfilelist{n});
+    
+    M = csvread(ippath_tmp, 2);
     
     display(M(1:10, :));
     x = M(:, 1);
@@ -30,11 +61,11 @@ for n = 1:length(filenames_nodot)
     zg = griddata(x,y,z,xg,yg,'v4');    
     % zg_2 = griddata(x,y,z,xg,yg,'linear');
     
-    outputfiledir = char(fullfile(folder_path, output_folder, filename));
-    csvwrite(outputfiledir, zg);
+    oppath_tmp = char(opfilelist{n});
+    csvwrite(oppath_tmp, zg);
     
-    % contourf(xg,yg,zg, 20);
+    contourf(xg,yg,zg, 20);
     
-    clear M xg yg zg x t z;
+    % clear M xg yg zg x t z;
 end
 

@@ -6,9 +6,9 @@
 #@ String(label="Folder for raw images", value = "03_testdata", persist=false) subdir_srcimg
 #@ String(label="Folder for tif images", value = "preproimg", persist=false) dir_preproimg
 #@ String(label="Folder for input .csv", value = "tstorm", persist=false) ip_dir
-#@ String(label="Subfolder for input .csv", value = "csvdata_crop", persist=false) ip_subdir
+#@ String(label="Subfolder for input .csv", value = "csvdata_crop_th_match", persist=false) ip_subdir
 #@ String(label="Folder for CBC output .csv", value = "spacial_test", persist=false) op_dir
-#@ String(label="Subfolder for CBC output .csv", value = "CBC_results", persist=false) op_subdir
+#@ String(label="Subfolder for CBC output .csv", value = "CBC_results_th_match", persist=false) op_subdir
 #@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 
 

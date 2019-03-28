@@ -1,9 +1,13 @@
 # %% make plot
+import numpy as np
+import re
 import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import re
+import matplotlib.style
+import matplotlib as mpl
+mpl.style.use('default')
+
 
 # Functions Section Begins ----------------------------------------------------- #
 def dircheck(targetpaths):
@@ -29,7 +33,7 @@ def listfiles(path, extension = None):
 		
 		for file_name in file_names:
 			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
-				filepath_tmp =  os.path.join(directory, file_name + extension)
+				filepath_tmp =  os.path.join(directory, file_name)
 				filelist.append(file_name)
 				fileabslist.append(filepath_tmp)
 	
@@ -49,27 +53,23 @@ analysis_dir = 'analysis_20190308'
 tstorm_dir = 'tstorm'
 st_dir = 'spacial_test'
 stormcsv_dir = 'csvdata_crop'
-cbccsv_dir = 'CBC_results'
 stormcsv_path = os.path.join(path, analysis_dir, tstorm_dir, stormcsv_dir)
-cbccsv_path = os.path.join(path, analysis_dir, st_dir, cbccsv_dir)
 print(stormcsv_path)
 
 # create output path
 photon_histo_dir = 'photons_hist'
-CBC_histo_dir = 'CBC_histogram'
 csv_threshold_dir = 'csvdata_crop_th'
+csv_th_match_dir = 'csvdata_crop_th_match'
+
 photon_histo_path = os.path.join(path, analysis_dir, st_dir, photon_histo_dir)
-CBC_histo_path = os.path.join(path, analysis_dir, st_dir, CBC_histo_dir)
 csv_threshold_path = os.path.join(path, analysis_dir, tstorm_dir, csv_threshold_dir)
+csv_th_match_path = os.path.join(path, analysis_dir, tstorm_dir, csv_th_match_dir)
 
 for c in range(nchannels):
     dir_check.append(os.path.join(photon_histo_path, str(c+1)))
-    dir_check.append(os.path.join(CBC_histo_path, str(c+1)))
     dir_check.append(os.path.join(csv_threshold_path, str(c+1)))
+    dir_check.append(os.path.join(csv_th_match_path, str(c+1)))
 
-print(photon_histo_path)
-
-# %%
 # check dir
 dircheck(dir_check)
 
@@ -256,7 +256,7 @@ for c in channel:
 # export sliced csv
 
 threshold = {
-    '1': 10000,
+    '1': 7000,
     '2': 15000,
 }
 data_list = []
@@ -266,139 +266,54 @@ for c in channel:
         # for i in range(10):
             filepath = filelist[str(c+1)][group][filedir[1]][i]
             # print(filepath)
-            data = pd.read_csv(filepath, header=0, index_col = 0)
+            data = pd.read_csv(filepath, header=0, index_col = False)
+            '''
             data['filename'] = filelist[str(c+1)][group][filedir[0]][i]
             data['group'] = group
             data['channel'] = str(c+1)
+            '''
             data=data[(data['intensity [photon]'] > threshold[str(c+1)])]
             csvpath = filelist[str(c+1)][group][filedir[3]][i]
             data.to_csv(csvpath, index = False)
-            
-            '''
-            data_list.append(data)
-
-            # print(data)
-            fig = plt.figure()
-            plt.hist(data['intensity [photon]'], 100)
-            plt.yscale('log')
-            plt.grid(True)
-            opfilename = filelist[str(c+1)][group][filedir[2]][i]
-            print(opfilename)
-            fig.savefig(opfilename)
-            plt.close()
-            '''
 
 # ----------------------------------------------------- #
+# remove files by the amount of event
 # %%
-# CBC trend 
-
-inputfilelist = []
-inputfileabslist = []
-opfilelist_cbc_histo = []
-
-for directory, dir_names, file_names in os.walk(inputfilepath):
-    for file_name in file_names:
-        if (not file_name.startswith('.')) & (file_name.endswith('.csv')):
-            inputfilepath_tmp = os.path.join(directory, file_name)
-            inputfilelist.append(file_name)
-            inputfileabslist.append(inputfilepath_tmp)
-            filenamepng = file_name.replace('.csv', '.png')
-            filepath_png = os.path.join(path, analysis_dir, outputfolder, CBC_histo, filenamepng)
-            opfilelist_cbc_histo.append(filepath_png)
-
-print(inputfilelist)
-print(inputfileabslist)
-print(opfilelist_cbc_histo)
-
-bins  = np.linspace(-1.0, 1.0, num = 21)
-print(bins)
-
-# %%
-group = {'w': 'wildtype', 'k': 'knockout'}
-data_all = pd.DataFrame()
-
-for i in range(len(inputfilelist)):
-# for i in range(1):
-    # get file name
-    filepath = inputfileabslist[i]
-    print(filepath)
-    
-    # get file basename
-    filename = os.path.basename(filepath).replace('.csv', '')
-    print(filename)
-    
-    # extract group
-    pattern = r'[0-9]{4}_[0-9]{2}_[0-9]{2}_(.*?)[0-9]'
-    try:
-        found = re.search(pattern, filename).group(1)
-    except AttributeError:
-        fount = ''
-
-    group_tmp = group[found]
-    print(group_tmp)
-
-    # load file
-    data = pd.read_csv(filepath, header=0)
-    data = data.dropna()
-    data['cbc'] = data['cbc'].apply(pd.to_numeric)
-    data['binned'] = pd.cut(data['cbc'], bins)
-    data['filename'] = filename
-    data['group'] = group_tmp
-    
-    display(data.loc[:, ['cbc', 'binned', 'filename', 'group']].head(10))
-    # print(data.columns.values)
-
-    data_all = pd.concat([data_all, data], ignore_index= True)
-
-    '''
-    fig = plt.figure()
-    plt.hist(data['cbc'], 40)
-    # plt.yscale('log')
-    plt.grid(True)
-    plt.xlim(-1, 1)
-    fig.savefig(opfilelist_cbc_histo[i])
-    '''
-
-# %%
-print(data_all.shape)
-
-# %%
-display(data_all)
-# %%
-# CBC data
-# binning 
-aggregations = {
-    'id' : 'count',
-    'group': 'max'
+cutoff = {
+    '1': 50, 
+    '2': 50,
 }
-data_grouped = data_all.groupby(['filename', 'binned'], as_index=False).agg(aggregations)
-display(data_grouped)
-
-aggregations = {
-    'id' : {'average' : 'mean','sem': 'sem'}
-}
-data_grouped_2 = data_grouped.groupby(['group', 'binned'], as_index=False).agg(aggregations)
-display(data_grouped_2)
-
+threshold_filelist = {}
+for c in channel:
+    filelist_tmp = listfiles(os.path.join(csv_threshold_path, str(c+1)), extension = '.csv')['fileabslist']
+    filelist_th_tmp = []
+    for i in filelist_tmp:
+        #print(i)
+        data_tmp = pd.read_csv(i, header=0, index_col = False)
+        if data_tmp.shape[0] > cutoff[str(c+1)]:
+           filelist_th_tmp.append(os.path.basename(i)) 
+    threshold_filelist[str(c+1)] = filelist_th_tmp
+print(threshold_filelist)
 
 # %%
-# filename
-outputplot = os.path.join(CBC_histo_path, 'CBC_results.png')
-print(outputplot)
+def compare_intersect(x, y):
+    return frozenset(x).intersection(y)
+    
 
-# create bins
-plot_bins = np.linspace(-0.975, 0.975, num = 20)
-print(plot_bins)
+c1 = threshold_filelist['1']
+c2 = threshold_filelist['2']
+print(len(c1))
+print(len(c2))
+matches = compare_intersect(c1, c2)
+print(len(matches))
+# %%
+print(matches)
 
-width = 0.040
-fig = plt.figure(figsize = (12,5), dpi = 100)
-ax = fig.add_subplot(111)
-
-data_wt = data_grouped_2.loc[data_grouped_2['group'] == 'wildtype']
-data_ko = data_grouped_2.loc[data_grouped_2['group'] == 'knockout']
-ax.bar(plot_bins - width/2, data_wt['id']['average'], width, yerr=data_wt['id']['sem'], capsize=2)
-ax.bar(plot_bins + width/2, data_ko['id']['average'], width, yerr=data_ko['id']['sem'], capsize=2)
-
-ax.set_xlim(-1.1, 1.1)
-
-fig.savefig(outputplot)
+# %%
+import shutil
+for i in matches: 
+    for c in channel: 
+        ipfilepath = os.path.join(csv_threshold_path, str(c+1), i)  
+        opfilepath = os.path.join(csv_th_match_path, str(c+1), i)
+        shutil.copy2(ipfilepath, opfilepath)
+    
