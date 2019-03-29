@@ -9,6 +9,7 @@ import matplotlib.image as mpimg
 import matplotlib.style
 import matplotlib as mpl
 mpl.style.use('default')
+from PIL import Image
 
 # Functions Section Begins ----------------------------------------------------- #
 def dircheck(targetpaths):
@@ -47,8 +48,10 @@ def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
 	then creates a pending list of unprocessed image. 
 	"""
 	
-	srclist = listfiles(src_dir, src_ext)['fileabslist']
-	oplist = listfiles(op_dir, op_ext)['fileabslist']
+	srclist = listfiles(src_dir, src_ext)
+	srclist = srclist['fileabslist']
+	oplist = listfiles(op_dir, op_ext)
+	oplist = oplist['fileabslist']
 
 	oplist_basename = []
 	for i in oplist:
@@ -110,6 +113,7 @@ for c in range(nchannels):
 # check dir
 dircheck(dir_check)
 
+# %%
 # create pending file list
 pd_scatter_ip = []
 pd_scatter_abs_ip = []
@@ -167,7 +171,11 @@ for i in range(len(pd_scatter_ip)):
     print(opfilename_tmp)
     fig.savefig(opfilename_tmp)
     plt.close()
-    '''
+
+# %%
+
+grid_size = 480
+for i in range(len(pd_grid_abs_ip)):    
     # grid plot
     filepath_tmp = pd_grid_abs_ip[i]
     print(filepath_tmp)
@@ -176,22 +184,28 @@ for i in range(len(pd_scatter_ip)):
 
     data = pd.read_csv(filepath_tmp, header=0)
     data = np.array(data)
-    print(data)
+    # print(data)
 
     data_2 = data
     data_2[data_2 < 0] = 0
     data_2[data_2 > 500] = 500
-
+    print(data_2)
+    '''
     mydpi = 100
-    fig = plt.figure(dpi=mydpi, figsize=(1024/mydpi, 1024/mydpi))
+    fig = plt.figure(dpi=mydpi, figsize=(grid_size/mydpi, grid_size/mydpi))
     # img = plt.imshow(data_2, origin="low", cmap = 'jet', clim= (0, 500))
-    plt.contourf(data_2, list(range(0, 510, 20)), cmap = 'jet',)
+    plt.contourf(data_2, list(range(0, 600, 10)), cmap = 'jet')
+    
     ax = plt.gca()
     plt.axis('off')
     plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0)
     plt.savefig(opfilename_tmp)
+    plt.show
+    plt.close()
     '''
-    # break
+    im = Image.fromarray(data_2)
+    im.save(opfilename_tmp, "TIFF")
+    break
 
 ##
 # After biharmonic interpolation in MATLAB

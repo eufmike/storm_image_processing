@@ -5,11 +5,13 @@ analysis_dir = 'analysis_20190308';
 st_dir = 'spacial_test';
 ip_dir = 'spacialdata_local'; % specify the input folder
 op_dir = 'spacialdata_local_int';
-% output_folder = 'raw_test_output'; % specify the output folder
+par_dir = 'par'
+csv_data = 'cropsize.csv'
 
 % create path
 ip_path = fullfile(folder_path, analysis_dir, st_dir, ip_dir);
 op_path = fullfile(folder_path, analysis_dir, st_dir, op_dir);
+csv_path = fullfile(folder_path, analysis_dir, par_dir, csv_data);
 
 if ~exist(op_path)
     mkdir(op_path);
@@ -25,7 +27,7 @@ for i = 1: length(filelist)
     mkdir(path_tmp)
 end
 
-
+% prepare input and optput filenames
 ipfilelist = {};
 opfilelist = {};
 for i = 1:numel(filelist)
@@ -46,20 +48,44 @@ end
 display(ipfilelist{1});
 display(opfilelist{1});
 
+% load csv data
+display(csv_path);
+csv_data = readtable(csv_path);
+csv_data.img = num2str(csv_data.img);
+csv_data.name_full = strcat(csv_data.name, '_r', csv_data.img, '.csv');
+
+
 
 %for n = 1:length(ipfilelist)
 for n = 1
+    
     ippath_tmp = char(ipfilelist{n});
+    [folder, baseFileName, extension] = fileparts(ippath_tmp);
+    display(baseFileName);
     
+    index = find(contains(csv_data.name_full, baseFileName));
+    
+    % load data
     M = csvread(ippath_tmp, 2);
-    
     display(M(1:10, :));
-    x = M(:, 1);
-    y = M(:, 2);
+    
+    pixelsize = 160;
+    framesize = 30;
+    x_start = csv_data.x(index);
+    y_start = csv_data.y(index);
+    
+    x = M(:, 1) - x_start * pixelsize;
+    y = M(:, 2) - y_start * pixelsize;
     z = M(:, 3);
-    [xg, yg] = meshgrid(10 : 20 : 20480);
+    
+    x_grid = 1:10:(framesize * pixelsize)
+    y_grid = 1:10:(framesize * pixelsize)
+    
+    [xg, yg] = meshgrid(x_grid, y_grid);
+
     zg = griddata(x,y,z,xg,yg,'v4');    
     % zg_2 = griddata(x,y,z,xg,yg,'linear');
+    % zg = griddata(x,y,z,xg,yg,'cubic'); 
     
     oppath_tmp = char(opfilelist{n});
     csvwrite(oppath_tmp, zg);
@@ -67,5 +93,5 @@ for n = 1
     contourf(xg,yg,zg, 20);
     
     % clear M xg yg zg x t z;
+    
 end
-
