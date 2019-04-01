@@ -116,6 +116,7 @@ df_cropdata['dx_nm'] = (df_cropdata['dx'] + pad_pixel*2) * 160
 df_cropdata['dy_nm'] = (df_cropdata['dy'] + pad_pixel*2) * 160
 df_cropdata['x_max_nm'] = df_cropdata['x_min_nm'] + df_cropdata['dx_nm'] 
 df_cropdata['y_max_nm'] = df_cropdata['y_min_nm'] + df_cropdata['dy_nm']
+print(df_cropdata['dx_nm'])
 
 display(df_cropdata)
 print(df_cropdata.shape[0])
