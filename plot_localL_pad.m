@@ -55,9 +55,8 @@ csv_data.img = num2str(csv_data.img);
 csv_data.name_full = strcat(csv_data.name, '_r', csv_data.img, '.csv');
 
 
-
-%for n = 1:length(ipfilelist)
-for n = 1
+for n = 1:length(ipfilelist)
+% for n = 1
     
     ippath_tmp = char(ipfilelist{n});
     [folder, baseFileName, extension] = fileparts(ippath_tmp);
@@ -94,7 +93,7 @@ for n = 1
     oppath_tmp = char(opfilelist{n});
     csvwrite(oppath_tmp, zg);
     
-    contourf(xg,yg,zg, 20);
+    % contourf(xg,yg,zg, 20);
     
     clear M xg yg zg x t z;
     
