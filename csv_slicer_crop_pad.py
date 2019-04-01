@@ -85,7 +85,7 @@ ip_path = os.path.join(path, analysis_dir, analysis_subdir, csvdata_dir)
 
 # create output path
 dir_for_check = []
-op_dir = 'csvdata_crop_int'
+op_dir = 'csvdata_crop_pad'
 op_path = os.path.join(path, analysis_dir, analysis_subdir, op_dir)
 print(op_path)
 dir_for_check.append(op_path)
