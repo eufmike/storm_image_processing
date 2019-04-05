@@ -1,5 +1,11 @@
 %% Define the path of folders
 close all;
+% par
+pixelsize = 160;
+framesize = 30;
+padsize = 0;
+
+
 folder_path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/';
 analysis_dir = 'analysis_20190308';
 st_dir = 'spacial_test';
@@ -7,6 +13,7 @@ ip_dir = 'spacialdata_local'; % specify the input folder
 op_dir = 'spacialdata_local_int';
 par_dir = 'par'
 csv_data = 'cropsize.csv'
+
 
 % create path
 ip_path = fullfile(folder_path, analysis_dir, st_dir, ip_dir);
@@ -55,9 +62,8 @@ csv_data.img = num2str(csv_data.img);
 csv_data.name_full = strcat(csv_data.name, '_r', csv_data.img, '.csv');
 
 
-
-%for n = 1:length(ipfilelist)
-for n = 1
+for n = 1:length(ipfilelist)
+% for n = 1
     
     ippath_tmp = char(ipfilelist{n});
     [folder, baseFileName, extension] = fileparts(ippath_tmp);
@@ -69,20 +75,21 @@ for n = 1
     M = csvread(ippath_tmp, 2);
     display(M(1:10, :));
     
-    pixelsize = 160;
-    framesize = 30;
     x_start = csv_data.x(index);
     y_start = csv_data.y(index);
     
-    x = M(:, 1) - x_start * pixelsize;
-    y = M(:, 2) - y_start * pixelsize;
+    grid_stepfactor = 10;
+    
+    x = M(:, 1) - (x_start - padsize) * pixelsize;
+    y = M(:, 2) - (y_start - padsize) * pixelsize;
     z = M(:, 3);
     
-    x_grid = 1:10:(framesize * pixelsize)
-    y_grid = 1:10:(framesize * pixelsize)
+    x_grid = (0 + grid_stepfactor/2) : grid_stepfactor : ((framesize + padsize * 2) * pixelsize)
+    y_grid = (0 + grid_stepfactor/2) : grid_stepfactor : ((framesize + padsize * 2) * pixelsize)
     
     [xg, yg] = meshgrid(x_grid, y_grid);
-
+    
+    
     zg = griddata(x,y,z,xg,yg,'v4');    
     % zg_2 = griddata(x,y,z,xg,yg,'linear');
     % zg = griddata(x,y,z,xg,yg,'cubic'); 
@@ -90,8 +97,8 @@ for n = 1
     oppath_tmp = char(opfilelist{n});
     csvwrite(oppath_tmp, zg);
     
-    contourf(xg,yg,zg, 20);
+    % contourf(xg,yg,zg, 20);
     
-    % clear M xg yg zg x t z;
+    clear M xg yg zg x t z;
     
 end

@@ -1,0 +1,386 @@
+digraph STROM_Chaser{
+    // Config the working layout
+    graph [fontname = "helvetica"];
+    node [fontname = "helvetica", style=filled, color=white];
+    edge [fontname = "helvetica"];
+    // Style of edge
+    splines = ortho;
+
+    //nodes
+    //preprocessing
+    rawimg [label= "STORM Image \n(.nd2)"];
+    img_prepro [label = "Image Processing \n(imgproc.py)", shape = box];
+    preproimg [label = "proproimg(.tif)\n./preproimg"];
+    imgintensity [label = "imgintensity(.csv)\n./imgintensity"];
+    imgmetadata [label = "imgmetadata\n./imginfo/imgmetadata"];
+    imgstat [label = "imgstat (.csv)\n./imginfo/"];
+   
+    //tSTORM analysis
+    stormanalysis [label = "ThunderSTORM\n(tstormanalysis.py)\nRun STORM Analysis", shape = box];
+    STORMdata [label="STORM_data\n(.csv)\n./tstorm/csvdata"];
+    slicer_t [label = "Sliced by T\n(csv_slicer.py)", shape = box];
+    STORMdata_sliced_T [label = "STORM_data\nsliced_T\n./csvdata_sliced"];
+    slicer_r [label = "Sliced by R\n3 regions per img\n(csv_slicer_crop.py)", shape = box];
+    STORMdata_sliced_R [label = "STORM_data\nsliced_R\n./csvdata_crop"];
+    
+    //spacial analysis
+    spatialanalysis [label = "Spatial Analysis\nspatstat, K, L, H\n(spatialanalysis.R)", shape = box];
+    spatialdata [label = "spatialdata\n(.csv)\n Var: K_r, L_r, H_r\n./spacialdata"];
+    spatialdata_bi [label = "spatialdata_bi\n(.rda)\n./spacialdata_bi"];
+
+    //spacial analysis plot
+    plot_spatialdata [label = "Plot spatialdata\n(plot_spatialdata.py)", shape = box];
+    plot_K [label = "Plot K_r\n(.png)\n./plot_K"];
+    plot_L [label = "Plot L_r\n(.png)\n./plot_L"];
+    plot_H [label = "Plot H_r\n(.png)\n./plot_H"];
+    plot_total [label = "Plot Summary\n(.png)\n./plot_total"];
+    
+    //CBC analysis
+    CBC_analysis [label = "CBC Analysis\n(CBC.py)", shape = box]
+    CBC_results [label = "CBC results\n.csv\n.CBC_results"]
+    //data inference
+    data_inference_photon [label = "data_inf\nphoton\n(data_inference_photon.py)", shape = box];
+    photons_hist [label = "photon histo\n./photons_hist"]
+    photons_hist_summary [label = "photon histo\nsummary\n./photons_hist"]
+    data_inference_cbc [label = "data_inf\nCBC\n(data_inference_cbc.py)", shape = box]
+    CBC_histogram [label = "CBC Histo\n./CBC_histogram"]
+    CBC_histogram_summary [label = "CBC Histo\n./CBC_histogram_summary"]
+    //filter data with threshold and make plot
+    slicer_threshold [label = "Sliced by Threshould\n(.csv)\n(csv_slicer_crop.py)", shape = box];
+    STORMdata_sliced_th [label = "STORM_data\nsliced_Threshold\n./csvdata_crop_th"];
+    spatialanalysis_th [label = "Spatial Analysis_th\nspatstat, K, L, H\n(spatialanalysis.R)", shape = box];
+    spatialdata_th [label = "spatialdata_th\n(.csv)\n Var: K_r, L_r, H_r\n./spacialdata"];
+    spatialdata_bi_th [label = "spatialdata_bi_th\n(.rda)\n./spacialdata_bi"];
+    plot_spatialdata_th [label = "Plot spatialdata_th\n(plot_spatialdata.py)", shape = box];
+    plot_K_th [label = "Plot K_r TH\n(.png)\n./plot_K"];
+    plot_L_th [label = "Plot L_r TH\n(.png)\n./plot_L"];
+    plot_H_th [label = "Plot H_r TH\n(.png)\n./plot_H"];
+    plot_total_th [label = "Plot Summary TH\n(.png)\n./plot_total"];
+    //filter data with threshold and make plot and match the file
+    STORMdata_sliced_th_match [label = "STORM_data\nsliced_Threshold_match\n./csvdata_crop_th_match"]
+    spatialanalysis_th_match [label = "Spatial Analysis_th\nmatch\nspatstat, K, L, H\n(spatialanalysis.R)", shape = box];
+    spatialdata_th_match [label = "spatialdata_th\nmatch\n(.csv)\n Var: K_r, L_r, H_r\n./spacialdata"];
+    spatialdata_bi_th_match [label = "spatialdata_bi_th\nmatch\n(.rda)\n./spacialdata_bi"];
+    plot_spatialdata_th_match [label = "Plot spatialdata_th\nmatch\n(plot_spatialdata.py)", shape = box];
+    plot_K_th_match [label = "Plot K_r TH\nmatch\n(.png)\n./plot_K"];
+    plot_L_th_match [label = "Plot L_r TH\nmatch\n(.png)\n./plot_L"];
+    plot_H_th_match [label = "Plot H_r TH\nmatch\n(.png)\n./plot_H"];
+    plot_total_th_match [label = "Plot Summary TH\nmatch\n(.png)\n./plot_total"];
+    //CBC analysis; thresholded match data\
+    CBC_analysis_th_match [label = "CBC Analysis\n(CBC_th_match.py)", shape = box];
+    CBC_results_th_match [label = "CBC results\n.csv\n.CBC_results"];
+    //data inference; thresholded match data (only CBC)
+    data_inference_cbc_th_match [label = "data_inf\nCBC_th_match\n(data_inference_cbc_th_match.py)", shape = box];
+    CBC_histogram_th_match [label = "CBC Histo\n./CBC_histogram_th_match"];
+    CBC_histogram_summary_th_match [label = "CBC Histo\n./CBC_histogram_summary_th_match"];
+    
+    //LocalL Analysis and plot
+    spacialanalysis_localL [label = "LocalL\n(spacialanalysis_localL.R)", shape = box];
+    spacialdata_local [label = "local\n./spacialdata_local"];
+    localL_interpolation [label = "LocalL Interpolation\n(localL_interpolation.m)", shape = box];
+    spacialdata_local_int [label = "local_grid\n./spacialdata_local_int"];
+    plot_localL [label = "Plot LocalL\n(plot_localL.py)", shape = box];
+    spacialdata_local_grid [label = "Grid Plot \nfor local_grid\n./spacialdata_local_grid"];
+    spacialdata_local_scatter [label = "Scatter Plot \nfor local_grid\n./spacialdata_local_scatter"];
+
+    subgraph cluster_Fiji {
+        label=<<B>Fiji</B>>;
+        style=filled;
+        color=lightblue;
+        labeljust ="l"
+
+        //nodes
+        rawimg;
+        img_prepro;
+        stormanalysis; 
+        CBC_analysis;
+        CBC_analysis_th_match;                 
+        }
+    
+    subgraph cluster_Python {
+        label=<<B>Python</B>>;
+        style=filled;
+        color=PaleGreen;
+        labeljust ="l";
+
+        //nodes
+        slicer_t;
+        slicer_r;
+        plot_spatialdata;
+        data_inference_photon;
+        data_inference_cbc;
+        slicer_threshold;
+        plot_spatialdata_th;
+        plot_spatialdata_th_match;
+        data_inference_cbc_th_match;
+        spacialanalysis_localL;
+        plot_localL;
+    }
+
+    subgraph cluster_R {
+        label=<<B>R</B>>;
+        style=filled;
+        color=sandybrown;
+        labeljust ="l";
+        //nodes
+        spatialanalysis;
+        spatialanalysis_th;
+        spatialanalysis_th_match;
+    }
+    subgraph cluster_MATLAB {
+        label=<<B>MATLAB</B>>;
+        style=filled;
+        color=aquamarine;
+        labeljust ="l";
+        //nodes
+        localL_interpolation
+    }
+    subgraph cluster_data_01{
+        label=<<B>Data</B>>;
+        style=filled;
+        color=pink;
+        labeljust ="l"
+        newrank="true";
+        
+        subgraph cluster_prepro_dir{
+            style="";
+            color = black;
+            label=<<B>dir: preprocessing</B>>
+            labeljust ="l";
+            //newrank="true";
+            //rank = same;
+            
+            // nodes
+            preproimg;
+            imgintensity;
+            imgmetadata;
+            imgstat;
+        }
+        subgraph cluster_TunderSTORM_dir{
+            style="";
+            color = black;
+            label=<<B>dir: tstorm</B>>;
+            labeljust ="l";
+            
+            // nodes
+            STORMdata; 
+            STORMdata_sliced_T;
+            STORMdata_sliced_R;
+            STORMdata_sliced_th;
+            STORMdata_sliced_th_match;
+        }
+    }
+    subgraph cluster_data_02{
+        label=<<B>Data</B>>;
+        style=filled;
+        color=pink;
+        labeljust ="l"
+        newrank="true";
+        subgraph cluster_spacial_test_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_01{
+                style=filled;
+                color=mistyrose;
+                label="";
+                spatialdata;
+                spatialdata_bi;
+            }
+            subgraph cluster_02{ 
+                style=filled;
+                color=mistyrose;
+                label="";
+                plot_K;
+                plot_L;
+                plot_H;
+                plot_total;
+            }
+        }
+    }
+    subgraph cluster_data_03{
+        label=<<B>Data</B>>;
+        style=filled;
+        color=pink;
+        labeljust ="l"
+        newrank="true";
+        subgraph cluster_datainf_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_03{
+                style=filled;
+                color=mistyrose;
+                label="";
+                CBC_results;
+                CBC_histogram; 
+                CBC_histogram_summary;
+            }
+            subgraph cluster_04{ 
+                style=filled;
+                color=mistyrose;
+                label="";
+                photons_hist;
+                photons_hist_summary;
+            }
+        }
+    }
+    subgraph cluster_data_04{
+        label=<<B>Data</B>>;
+        style=filled;
+        color=pink;
+        labeljust ="l"
+        newrank="true";
+        subgraph cluster_spacial_test_th_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_01{
+                style=filled;
+                color=mistyrose;
+                label="";
+                spatialdata_th;
+                spatialdata_bi_th;
+            }
+            subgraph cluster_02{ 
+                style=filled;
+                color=mistyrose;
+                label="";
+                plot_K_th;
+                plot_L_th;
+                plot_H_th;
+                plot_total_th;
+            }
+        }
+        subgraph cluster_spacial_test_th_math_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_01{
+                style=filled;
+                color=mistyrose;
+                label="";
+                spatialdata_th_match;
+                spatialdata_bi_th_match;
+            }
+            subgraph cluster_02{ 
+                style=filled;
+                color=mistyrose;
+                label="";
+                plot_K_th_match;
+                plot_L_th_match;
+                plot_H_th_match;
+                plot_total_th_match;
+            }
+        }
+        subgraph cluster_datainf_th_match_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_03{
+                style=filled;
+                color=mistyrose;
+                label="";
+                CBC_results_th_match;
+                CBC_histogram_th_match; 
+                CBC_histogram_summary_th_match;
+            }
+        }
+        subgraph cluster_localL_dir{
+            style="";
+            color = black;
+            label=<<B>dir: spacial_test</B>>
+            labeljust ="l";
+            newrank="true";
+            ordering=out;
+            subgraph cluster_03{
+                style=filled;
+                color=mistyrose;
+                label="";
+                spacialdata_local;
+                spacialdata_local_int;
+                spacialdata_local_grid;
+                spacialdata_local_scatter;
+            }
+        }
+    }
+
+
+    //edges
+    //preprocessing
+    rawimg -> img_prepro;
+    img_prepro -> {preproimg imgintensity imgmetadata imgstat};
+    
+    //tSTORM analysis
+    preproimg -> stormanalysis; 
+    stormanalysis -> STORMdata; 
+    STORMdata -> slicer_t;
+    slicer_t -> STORMdata_sliced_T;
+    STORMdata_sliced_T -> slicer_r;
+    slicer_r -> STORMdata_sliced_R;
+    
+    //spacial analysis
+    STORMdata_sliced_R -> spatialanalysis;
+    spatialanalysis -> {spatialdata spatialdata_bi};
+
+    //spacial analysis plot
+    spatialdata -> plot_spatialdata;
+    plot_spatialdata -> {plot_K plot_L, plot_H, plot_total};
+    
+    //CBC analysis
+    STORMdata_sliced_R -> CBC_analysis
+    CBC_analysis -> CBC_results
+
+    //data inference
+    STORMdata_sliced_R -> data_inference_photon;
+    data_inference_photon -> {photons_hist photons_hist_summary};
+    CBC_results -> data_inference_cbc;
+    data_inference_cbc -> {CBC_histogram CBC_histogram_summary};
+
+    //filter data with threshold and make plot
+    photons_hist_summary -> slicer_threshold;
+    slicer_threshold -> {STORMdata_sliced_th STORMdata_sliced_th_match};
+    STORMdata_sliced_th -> spatialanalysis_th;
+    spatialanalysis_th -> {spatialdata_th, spatialdata_bi_th};
+    spatialdata_th -> plot_spatialdata_th;
+    plot_spatialdata_th -> {plot_K_th plot_L_th plot_H_th plot_total_th};
+
+    //filter data with threshold and make plot and match the file
+    STORMdata_sliced_th -> spatialanalysis_th_match;
+    spatialanalysis_th_match -> spatialdata_th_match;
+    spatialanalysis_th_match -> spatialdata_bi_th_match;
+    spatialdata_th_match -> plot_spatialdata_th_match;
+    plot_spatialdata_th_match -> {plot_K_th_match plot_L_th_match plot_H_th_match plot_total_th_match};
+
+    //CBC analysis
+    STORMdata_sliced_th_match -> CBC_analysis_th_match;
+    CBC_analysis_th_match -> CBC_results_th_match;
+    
+    //data inference; CBC
+    CBC_results_th_match -> data_inference_cbc_th_match;
+    data_inference_cbc_th_match -> {CBC_histogram_th_match CBC_histogram_summary_th_match};
+
+    //LocalL Analysis and plot
+    STORMdata_sliced_R -> spacialanalysis_localL;
+    spacialanalysis_localL -> spacialdata_local;
+    spacialdata_local -> localL_interpolation;
+    localL_interpolation -> spacialdata_local_int;
+    {spacialdata_local, spacialdata_local_int} -> plot_localL;
+    plot_localL -> {spacialdata_local_grid, spacialdata_local_scatter};
+    
+}

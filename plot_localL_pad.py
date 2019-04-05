@@ -101,9 +101,9 @@ csv_grid_path = os.path.join(path, analysis_dir, st_dir, csv_grid_dir)
 
 dir_check = []
 
-img_scatter_dir = 'spacialdata_local_scatter_pad'
+img_scatter_dir = 'spacialdata_local_pad_scatter'
 img_scatter_path = os.path.join(path, analysis_dir, st_dir, img_scatter_dir)
-img_grid_dir = 'spacialdata_local_grid_pad'
+img_grid_dir = 'spacialdata_local_pad_grid'
 img_grid_path = os.path.join(path, analysis_dir, st_dir, img_grid_dir)
 
 for c in range(nchannels):

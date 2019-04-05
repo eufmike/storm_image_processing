@@ -1,5 +1,11 @@
 %% Define the path of folders
 close all;
+% par
+pixelsize = 160;
+framesize = 30;
+padsize = 3;
+
+
 folder_path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/';
 analysis_dir = 'analysis_20190308';
 st_dir = 'spacial_test';
@@ -7,6 +13,7 @@ ip_dir = 'spacialdata_local_pad'; % specify the input folder
 op_dir = 'spacialdata_local_pad_int';
 par_dir = 'par'
 csv_data = 'cropsize.csv'
+
 
 % create path
 ip_path = fullfile(folder_path, analysis_dir, st_dir, ip_dir);
@@ -68,9 +75,6 @@ for n = 1:length(ipfilelist)
     M = csvread(ippath_tmp, 2);
     display(M(1:10, :));
     
-    pixelsize = 160;
-    framesize = 30;
-    padsize = 3;
     x_start = csv_data.x(index);
     y_start = csv_data.y(index);
     
