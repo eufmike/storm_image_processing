@@ -1,6 +1,7 @@
 # %%
 import os, sys
 import re
+import cv2
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,13 +63,16 @@ print(intcsv_path)
 # output folder
 nnd_dir = 'nnd'
 intcsv_histo_dir = 'int_grid_histo'
-intcsv_histo_summary_dir = 'int_grid_histo'
+intcsv_histo_summary_dir = 'int_grid_histo_summary'
+intcsv_bw = 'int_grid_bw'
 intcsv_histo_path = os.path.join(path, analysis_dir, spacialtestdir, nnd_dir, intcsv_histo_dir)
 intcsv_histo_summary_path = os.path.join(path, analysis_dir, spacialtestdir, nnd_dir, intcsv_histo_summary_dir)
 
 for c in range(nchannels):
-	dir_check.append(os.path.join(intcsv_histo_path, str(c+1)))
+    dir_check.append(os.path.join(intcsv_histo_path, str(c+1)))
+    dir_check.append(os.path.join(intcsv_bw, str(c+1)))
 
+dir_check.append(intcsv_histo_summary_path)
 dircheck(dir_check)
 
 # %%
@@ -76,7 +80,7 @@ dircheck(dir_check)
 filelist = {}
 
 filenamelist = listfiles(os.path.join(intcsv_path, '1'), '.tif')['filelist']
-filedir = ['ip_filename', 'ip_path', 'op_hist']
+filedir = ['ip_filename', 'ip_path', 'op_hist', 'op_bw']
 treatment = ['wildtype', 'knockout']
 channel = list(range(2))
 print(channel)
@@ -148,12 +152,12 @@ for c in channel:
     print(c)
     data_temp = data_total[data_total['channel'] == str(c+1)]
     #print(data_temp)
-    photon_max = max(data_temp['density'])
-    print(photon_max)
-    binsize = 1000
-    photon_bin_max = photon_max//binsize
-    print(photon_bin_max)
-    bin_list = list(range(0, (int(photon_bin_max) + 2) * binsize, binsize))
+    max_value = max(data_temp['density'])
+    print(max_value)
+    binsize = 25
+    bin_max_value = max_value//binsize
+    print(bin_max_value)
+    bin_list = list(range(0, (int(bin_max_value) + 2) * binsize, binsize))
     print(bin_list)
     fig, axes = plt.subplots()
     colors = ['red', 'blue']
@@ -169,22 +173,90 @@ for c in channel:
             plt.yscale('log')
             #plt.xscale('log')
         
-    fig.savefig(os.path.join(intcsv_histo_summary_path, 'photon' + '_c' +  str(c+1) + '.png'))
-    axes.set_xlim(0, 2500)
+    fig.savefig(os.path.join(intcsv_histo_summary_path, 'density' + '_c' +  str(c+1) + '.png'))
+    axes.set_xlim(0, max_value)
     plt.close()
 
 # %%
-im = np.array(Image.open(inputfile))
-im
+# mergeed plot, grouped by channel and treatment, average and errorbar
+for c in channel:
+    
+    print('channel: {}'.format(c))
+    # load data
+    data_temp = data_total[data_total['channel'] == str(c+1)]
+    #print(data_temp)
+    
+    # prepare binning (bin_list)
+    max_value = max(data_temp['density'])
+    print('max_value: {}'.format(max_value))
+    binsize = 25
+    bin_max_value = max_value//binsize
+    print('bin_max_value: {}'.format(bin_max_value))
+    bin_list = list(range(0, (int(bin_max_value) + 2) * binsize, binsize))
+    print(bin_list)
+    
+    # prepare binned data
+    data_total_tmp = data_total
+    data_total_tmp['bins'] = pd.cut(data_total['density'], bins = bin_list)
+    # 1st group by bins
+    data_total_tmp = data_total_tmp.groupby(by = ['channel', 'group', 'filename', 'bins']).size()
+    # reset index
+    data_total_tmp = data_total_tmp.reset_index()
+    data_total_tmp = data_total_tmp.rename(index = int, columns={0: 'counts'})
+    # 2nd group by 
+    data_total_tmp_mean = data_total_tmp.groupby(by = ['channel', 'group', 'bins']).mean()['counts']
+    data_total_tmp_sem = data_total_tmp.groupby(by = ['channel', 'group', 'bins']).sem()['counts']
+
+    
+    print('binned data, mean')
+    display(data_total_tmp_mean)
+    print('binned data, sem')
+    display(data_total_tmp_sem)
+    
+
+    # plot mean dataset
+    fig, axes = plt.subplots()
+    fig.set_figheight(15)
+    fig.set_figwidth(15)
+    colors = ['red', 'blue']
+    for m in range(len(treatment)):
+        # print(m)
+        data_mean_temp_mean = data_total_tmp_mean.loc[str(c+1), treatment[m]]
+        x = list(range(0, data_mean_temp_mean.shape[0]*binsize, binsize))
+        # print(x)
+        # x = data_mean_temp_mean.reset_index()['bins']
+        # print(x)
+        y = data_mean_temp_mean.reset_index()['counts']
+        # print(y)
+        
+        data_mean_temp_sem = data_total_tmp_sem.loc[str(c+1), treatment[m]]
+        yerr = data_mean_temp_sem.reset_index()['counts']
+        # print(yerr)
+        plt.yscale('log')
+        #plt.xscale('log')
+        
+        # make plots
+        plt.errorbar(x, y, yerr = yerr, color = colors[m], alpha = 0.2)
+    
+    plt.yscale('log')
+    axes.set_xlim(0, max_value)
+    oppath_temp = os.path.join(intcsv_histo_summary_path, 'density_mean' + '_c' +  str(c+1) + '.png')
+    print(oppath_temp)
+    fig.savefig(oppath_temp)
+    plt.close()
 
 # %%
-type(im)
-# %% 
-im.shape
-
-# %%
-plt.yscale('log')
-plt.hist(im.ravel(), bins=256, range=(0, 1000))
-
-
-# %%
+# create binary by thresholding
+for c in channel:
+    print('channel: {}'.format(c))
+    for group in treatment:
+        for i in range(len(filelist[str(c+1)][group][filedir[0]])):
+            filepath = filelist[str(c+1)][group][filedir[1]][i]
+            print(filepath)
+            im = np.array(Image.open(filepath))
+            print(type(im))
+            cv2.imshow('image', im)
+            break
+        break
+    break
+        
