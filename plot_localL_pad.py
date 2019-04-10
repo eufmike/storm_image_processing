@@ -188,7 +188,7 @@ for i in range(len(pd_grid_abs_ip)):
 
     data_sliced = data
     data_sliced[data_sliced < 0] = 0
-    data_sliced[data_sliced > 500] = 500
+    # data_sliced[data_sliced > 500] = 500
     print(data_sliced)
     print(data_sliced.shape)
     '''
