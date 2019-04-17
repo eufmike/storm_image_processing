@@ -25,6 +25,7 @@ from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 # %%
 nchannels = 2
 dir_check = []
+pixelsize = 0.01 # 0.01 µm/pixel
 
 # %%
 # input folder
@@ -40,9 +41,7 @@ print(nnd_data_path)
 nnd_plot_dir = 'int_grid_data_nndplot'
 nnd_plot_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_plot_dir)
 
-for c in range(nchannels):
-    dir_check.append(os.path.join(nnd_plot_path, str(c+1)))
-
+dir_check.append(nnd_plot_path)
 DirCheck(dir_check)
 
 # %%
@@ -88,31 +87,128 @@ data_total = pd.DataFrame(data_total)
 # display(data_total)
 # print(data_total.shape)
 data_total['Area'] = data_total['Area'].astype('int') 
+data_total['Area_nm2'] = data_total['Area'] * (pixelsize * 10**3)**2
+data_total['min_dist_nm'] = data_total['min_dist'] * pixelsize * 10**3
+
 print(data_total.dtypes)
+display(data_total)
 
 # %%
-# plot merge histogram with Area
+# plot merge nnd histogram with Area
 for c in range(nchannels):
-    print('channel: {}'.format(c))
+    # print('channel: {}'.format(c))
     
-    fig, axes = plt.subplots()
+    dpi = 300
+    fig, axes = plt.subplots(dpi = dpi)
     fig.set_figheight(5)
-    fig.set_figwidth(12)
+    fig.set_figwidth(8)
     colors = {
         'wildtype':'red', 
         'knockout':'blue'
-    }
-
+    } 
+    
+    data_temp_c = data_total[data_total['channel'] == str(c+1)]
+    # prepare binning (bin_list)
+    val_max = max(data_temp_c['min_dist_nm'])
+    print('min_dist_nm_max: {}'.format(val_max))
+    binsize = 50
+    bin_max = val_max//binsize
+    print('min_dist_nm_bin_max: {}'.format(bin_max))
+    bin_list = list(range(0, (int(bin_max) + 2) * binsize, binsize))
+    print(bin_list)
+    
     for g in group.keys():
-        print(data_total['channel'])
-        data_temp = data_total[data_total['channel'] == str(c+1)]
-        data_temp = data_temp[data_temp['group'] == g]
-        display(data_temp)
+        # print(data_total['channel'])
+        data_temp_cg = data_temp_c[data_temp_c['group'] == g]
+        # display(data_temp_cg)
         
-        plt.hist(data_temp['min_dist'], bins = 100, color = colors[g], alpha = 0.2, density = True)
-        #plt.yscale('log')
+        # plt.hist(data_temp_cg['min_dist_nm'], bins = 50, color = colors[g], alpha = 0.2)
 
+        hist, bins = np.histogram(data_temp_cg['min_dist_nm'], bins = bin_list)
+        
+        plt.bar(bins[:-1], hist.astype(np.float32)/hist.sum() * 100, width=binsize, color = colors[g], alpha = 0.2)
+
+    plt.title('NND Distribution for Channel ' + str(c+1))    
+    plt.xlabel('Centroid NND (µm)')
+    plt.ylabel('Freqency counts (%)')
+    axes.spines['right'].set_visible(False)
+    axes.spines['top'].set_visible(False)
+    
+    
     figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nnd.png")
     fig.savefig(figop)
     plt.close()
+
+# %%
+# plot nanocluster areas
+for c in range(nchannels):
     
+    dpi = 300
+    fig = plt.figure(dpi = dpi)
+    fig.set_figheight(5)
+    fig.set_figwidth(10)
+    
+    ## size of nano cluster
+    data_temp_c = data_total[data_total['channel'] == str(c+1)]
+    data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['Area_nm2'].mean()
+    display(data_temp_c_group)
+    data_temp_c_mean = data_temp_c_group.reset_index()
+    data_temp_c_mean_group = data_temp_c_mean.groupby(by = "group").mean()
+    data_temp_c_sem_group = data_temp_c_mean.groupby(by = "group").sem()
+    display(data_temp_c_mean_group['Area_nm2'])
+    display(data_temp_c_sem_group['Area_nm2'])
+
+    ## make plot    
+    ax1 = plt.subplot(121)
+    ax1.bar(['widetype', 'knockout'], 
+            data_temp_c_mean_group['Area_nm2'], 
+            yerr= data_temp_c_sem_group['Area_nm2'], 
+            color=['red', 'blue'],
+            alpha = 0.2,
+            width = 0.8, 
+            capsize = 10)
+    plt.title('Nanocluster Area')
+    plt.ylabel(r'$Nanocluster\ areas\ (nm^2)$')
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    
+    ## density of nano cluster
+    # calculate the size of field of view
+    frame_xsize = 480
+    frame_ysize = 480
+    fvarea_µm = (frame_xsize * pixelsize) * (frame_ysize * pixelsize)
+
+    # count objects
+    data_temp_c = data_total[data_total['channel'] == str(c+1)]
+    data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['Area_nm2'].agg('count')
+    data_temp_c_count = data_temp_c_group.reset_index()
+    display(data_temp_c_count)
+    data_temp_c_count_mean_group = data_temp_c_count.groupby(by = "group").mean()
+    data_temp_c_count_sem_group = data_temp_c_count.groupby(by = "group").sem()
+    display(data_temp_c_count_mean_group['Area_nm2'])
+    display(data_temp_c_count_sem_group['Area_nm2'])
+
+    ## make plot    
+    ax2 = plt.subplot(122)
+    ax2.bar(['widetype', 'knockout'], 
+            data_temp_c_count_mean_group['Area_nm2'], 
+            yerr= data_temp_c_count_sem_group['Area_nm2'], 
+            color=['red', 'blue'],
+            alpha = 0.2,
+            width = 0.8, 
+            capsize = 10)
+    plt.title('Nanocluster Density')
+    plt.ylabel(r'$Nanocluster\ \slash \ µm^2$')
+    ax2.spines['right'].set_visible(False)
+    ax2.spines['top'].set_visible(False)
+
+    figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nanocluster.png")
+    fig.savefig(figop)
+    plt.close()
+
+    
+    
+    
+    
+
+# plot nanocluster density
