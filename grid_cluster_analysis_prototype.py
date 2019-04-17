@@ -5,7 +5,6 @@ import cv2
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-# %matplotlib inline
 
 from numpy import linspace, meshgrid
 from scipy.interpolate import griddata
@@ -44,7 +43,45 @@ def listfiles(path, extension = None):
 				fileabslist.append(filepath_tmp)
 	
 	return {'filelist': filelist,
-			'fileabslist': fileabslist}               
+			'fileabslist': fileabslist}           
+
+def getprocessedimg(op_dir, pattern = r'(.+?).'):
+	"""
+	NOT USING
+	getprocessedimg check the output folder and create a list of processed data
+	pattern: the pattern re search
+	"""
+	processed_img = []
+	for (directory, dir_names, file_names) in os.walk(op_dir):
+		for file_name in file_names:
+			# print(file_name)
+
+			# search the processed files by using re.search
+			m = re.search(pattern, file_name)
+			if m: 
+				# print(m)
+				file_name_temp = m.group(1)
+				processed_img.append(file_name_temp)
+	# replace the duplicated filenames
+	processed_img = list(set(processed_img))
+	
+	return (processed_img)
+
+def listfiles(path, extension = None):
+	filelist = []
+	fileabslist = []
+	for directory, dir_names, file_names in os.walk(path):
+		# print(file_names)
+		
+		for file_name in file_names:
+			if (not file_name.startswith('.')) & (file_name.endswith(extension)):
+				filepath_tmp =  os.path.join(directory, file_name + extension)
+				filelist.append(file_name)
+				fileabslist.append(filepath_tmp)
+	
+	return {'filelist': filelist,
+			'fileabslist': fileabslist}
+                
 # Functions Section Ends ----------------------------------------------------- #
 
 # %%
@@ -127,16 +164,63 @@ print(filelist)
 
 
 # %%
+threshold_c = {'1': 400,
+               '2': 600,}
+
 # create binary by thresholding
 for c in channel:
     print('channel: {}'.format(c))
     for group in treatment:
         for i in range(len(filelist[str(c+1)][group][filedir[0]])):
+            
+            images = []
+            # load data
             filepath = filelist[str(c+1)][group][filedir[1]][i]
             print(filepath)
             im = np.array(Image.open(filepath))
             print(type(im))
-            cv2.imshow('image', im)
+            # print array
+            print(im)
+            images.append(im)
+            # visulization ---------------------------------------------- #
+            '''
+            # brightness adjustment
+            factor_up = 0.3
+            max_value = np.max(im) * factor_up
+            print(max_value)
+            im_scale = im * (((2**16-1) - 0) / (max_value - 0))
+
+            # assign oversaturated pixel to the max value
+            np.putmask(im_scale, im_scale>(2**16-1), (2**16-1))
+            
+            # conver to 16bit
+            im_scale_16 = im_scale.astype("uint16")
+        
+            # show image
+            cv2.imshow('image', im_scale_16)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            '''
+            # thresholding ---------------------------------------------- #
+            
+            ret,thresh1 = cv2.threshold(im, threshold_c[str(c+1)], (2**16-1), cv2.THRESH_BINARY)
+            thresh1 = np.array(thresh1, dtype=np.uint8)
+            plt.imshow(thresh1)
+            images.append(thresh1)
+            print(thresh1.dtype)
+            print(np.max(thresh1))
+
+            ret, labels= cv2.connectedComponents(thresh1)
+            images.append(labels)
+
+            for i in range(len(images)):
+                plt.subplot(2, 2, i+1)
+                plt.imshow(images[i], 'gray')
+                plt.xticks([])
+                plt.yticks([])
+            
+            
+
             break
         break
     break
