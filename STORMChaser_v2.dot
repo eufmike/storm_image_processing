@@ -9,7 +9,7 @@ digraph STROM_Chaser{
     //nodes
     //preprocessing
     rawimg [label= "STORM Image \n(.nd2)"];
-    img_prepro [label = <<B>Fiji</B><br />Image Processing<br />1. Split channel<br />2. Export stats<br />(imgproc.py)>, 
+    img_prepro [label = <<B>Fiji</B><br />Image Processing<br />1. Split channel<br />2. Export stats<br />(/Fiji/imgproc.py)>, 
                 shape = box, style=filled;
                 color=lightblue];
     preproimg [label = "proproimg(.tif)\n./preproimg"];
@@ -18,7 +18,7 @@ digraph STROM_Chaser{
     imgstat [label = "imgstat (.csv)\n./imginfo/"];
    
     //tSTORM analysis
-    tstormanalysis [label = <<B>Fiji</B><br />ThunderSTORM<br />Run STORM Analysis<br />(tstormanalysis.py)>, 
+    tstormanalysis [label = <<B>Fiji</B><br />ThunderSTORM<br />Run STORM Analysis<br />(/Fiji/tstormanalysis.py)>, 
                     shape = box, style=filled,
                     color=lightblue];
     STORMdata [label="STORM_data\n(.csv)\n./tstorm/csvdata"];
@@ -49,7 +49,7 @@ digraph STROM_Chaser{
     plot_total [label = "Plot Summary\n(.png)\n./plot_total"];
     
     //CBC analysis
-    CBC_analysis [label = <<B>Fiji</B><br />CBC Analysis<br />(CBC.py)>, 
+    CBC_analysis [label = <<B>Fiji</B><br />CBC Analysis<br />(/Fiji/CBC.py)>, 
                     shape = box, style=filled,
                     color=lightblue];
     CBC_results [label = "CBC results\n.csv\n.CBC_results"]
@@ -96,7 +96,7 @@ digraph STROM_Chaser{
     plot_H_th_match [label = "Plot H_r TH\nmatch\n(.png)\n./plot_H"];
     plot_total_th_match [label = "Plot Summary TH\nmatch\n(.png)\n./plot_total"];
     //CBC analysis; thresholded match data\
-    CBC_analysis_th_match [label = <<B>Fiji</B><br />CBC Analysis<br />match<br />(CBC_th_match.py)>, 
+    CBC_analysis_th_match [label = <<B>Fiji</B><br />CBC Analysis<br />match<br />(/Fiji/CBC_th_match.py)>, 
                             shape = box, style=filled,
                             color=lightblue];
     CBC_results_th_match [label = "CBC results\n.csv\n.CBC_results"];
@@ -143,7 +143,25 @@ digraph STROM_Chaser{
     spacialdata_local_pad_grid [label = "Grid Plot \nfor local_grid\n./spacialdata_local_pad_grid"];
     spacialdata_local_pad_scatter [label = "Scatter Plot \nfor local_grid\n./spacialdata_local_pad_scatter"];
 
-    
+    //Nanocluster Analysis
+    grid_cluster_analysis_Fiji [label = <<B>Fiji</B><br />gird_cluster_analysis<br />(/Fiji/grid_cluster_analysis_Fiji.py)>, 
+                shape = box, style=filled;
+                color=lightblue];
+    int_grid_bi [label = "Nanocluster \nBinary \n./nnd/int_grid_bi"];
+    int_grid_data [label = "Nanocluster \nParticle Measurement \n./nnd/int_grid_data"];
+    ndd_filter [label = <<B>Python</B><br />Filter Cluster by Analysis<br />(int_grid_data_nndplot.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_filtered [label = "Nanocluster \nFiltered Analysis\n./nnd/int_grid_data_filtered"];
+    int_grid_data_summary [label = "Nanocluster \nHisto Plot\n./nnd/int_grid_data_summary"];
+    nnd [label = <<B>Python</B><br />NND Calculator<br />(nnd.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_dist [label = "Nanocluster \nWith nnd\n./nnd/int_grid_data_dist"];
+    nnd_plot [label = <<B>Python</B><br />Generate<br />1. NND Plot<br />2. NC area<br />3. NC density<br />(nnd_plot.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_nndplot [label = "Nanocluster \nWith nnd\n./nnd/int_grid_data_nndplot"];
 
     //edges
     //preprocessing
@@ -219,4 +237,13 @@ digraph STROM_Chaser{
     {spacialdata_local_pad, spacialdata_local_pad_int} -> plot_localL_pad;
     plot_localL_pad -> {spacialdata_local_pad_grid, spacialdata_local_pad_scatter};
     
+    //Nanocluster Analysis
+    spacialdata_local_pad_grid -> grid_cluster_analysis_Fiji;
+    grid_cluster_analysis_Fiji -> {int_grid_bi, int_grid_data};
+    int_grid_data -> ndd_filter;
+    ndd_filter -> {int_grid_data_filtered, int_grid_data_summary}
+    int_grid_data_filtered -> nnd
+    nnd -> int_grid_data_dist
+    int_grid_data_dist -> nnd_plot
+    nnd_plot -> int_grid_data_nndplot
 }

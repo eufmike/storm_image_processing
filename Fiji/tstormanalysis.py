@@ -312,9 +312,11 @@ def run_script(path=path):
 		time.sleep(3)
 		gc.collect()
 
-	# time.sleep(3)
+	time.sleep(3)
+	
 	if batchmodeop:
 		Interpreter.batchMode = False
+	
 	import gc
 	gc.collect()
 	

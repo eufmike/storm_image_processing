@@ -127,15 +127,54 @@ for c in range(nchannels):
         hist, bins = np.histogram(data_temp_cg['min_dist_nm'], bins = bin_list)
         
         plt.bar(bins[:-1], hist.astype(np.float32)/hist.sum() * 100, width=binsize, color = colors[g], alpha = 0.2)
-
-    plt.title('NND Distribution for Channel ' + str(c+1))    
-    plt.xlabel('Centroid NND (µm)')
-    plt.ylabel('Freqency counts (%)')
+    axes.legend(colors.keys())
+    plt.title('NND Distribution for Channel ' + str(c+1), fontsize = 18)
+    plt.xlabel('Centroid NND (µm)', fontsize = 18)
+    plt.ylabel('Freqency counts (%)', fontsize = 18)
     axes.spines['right'].set_visible(False)
     axes.spines['top'].set_visible(False)
     
     
     figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nnd.png")
+    fig.savefig(figop)
+    plt.close()
+
+# %%
+# mean nnd distance
+for c in range(nchannels):
+    
+    dpi = 300
+    fig = plt.figure(dpi = dpi)
+    fig.set_figheight(5)
+    fig.set_figwidth(5)
+
+    ## size of nnd
+    data_temp_c = data_total[data_total['channel'] == str(c+1)]
+    data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['min_dist_nm'].mean()
+    display(data_temp_c_group)
+    data_temp_c_mean = data_temp_c_group.reset_index()
+    data_temp_c_mean_group = data_temp_c_mean.groupby(by = "group").mean()
+    data_temp_c_sem_group = data_temp_c_mean.groupby(by = "group").sem()
+    display(data_temp_c_mean_group['min_dist_nm'])
+    display(data_temp_c_sem_group['min_dist_nm'])
+
+    ## make plot    
+    ax1 = plt.subplot(111)
+    ax1.bar(['widetype', 'knockout'], 
+            data_temp_c_mean_group['min_dist_nm'], 
+            yerr= data_temp_c_sem_group['min_dist_nm'], 
+            color=['red', 'blue'],
+            alpha = 0.2,
+            width = 0.8, 
+            capsize = 10)
+    plt.title('Nearest Neighbor Distance', fontsize = 18)
+    plt.xticks(fontsize = 18)
+    plt.ylabel('NN Distance (nm)', fontsize = 18)
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    plt.gcf().subplots_adjust(left=0.15)
+    
+    figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nnd_mean.png")
     fig.savefig(figop)
     plt.close()
 
@@ -167,8 +206,9 @@ for c in range(nchannels):
             alpha = 0.2,
             width = 0.8, 
             capsize = 10)
-    plt.title('Nanocluster Area')
-    plt.ylabel(r'$Nanocluster\ areas\ (nm^2)$')
+    plt.title('Nanocluster Area', fontsize = 18)
+    plt.xticks(fontsize = 18)
+    plt.ylabel(r'$Nanocluster\ areas\ (nm^2)$', fontsize = 18)
     ax1.spines['right'].set_visible(False)
     ax1.spines['top'].set_visible(False)
     
@@ -196,9 +236,10 @@ for c in range(nchannels):
             color=['red', 'blue'],
             alpha = 0.2,
             width = 0.8, 
-            capsize = 10)
-    plt.title('Nanocluster Density')
-    plt.ylabel(r'$Nanocluster\ \slash \ µm^2$')
+            capsize = 10,)
+    plt.title('Nanocluster Density', fontsize = 18)
+    plt.xticks(fontsize = 18)
+    plt.ylabel(r'$Nanocluster\ \slash \ µm^2$', fontsize = 18)
     ax2.spines['right'].set_visible(False)
     ax2.spines['top'].set_visible(False)
 
@@ -206,6 +247,7 @@ for c in range(nchannels):
     fig.savefig(figop)
     plt.close()
 
+    
     
     
     

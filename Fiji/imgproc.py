@@ -3,6 +3,7 @@
 #@ String(label="Name of the Analysis", value = "analysis_20190308", persist=false) dir_output
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
 #@ String(label="Folder for raw images", value = "03_testdata", persist=false) dir_srcimg
+#@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 
 print('Script Starts')
 print('Importing modules ...')
@@ -169,6 +170,9 @@ def run_script(path=path):
 	# Prepare workspace ========================= #
 	print('Preparing ...')
 	# log.info('Preparing ...')
+
+	if batchmodeop:
+		Interpreter.batchMode = True
 
 	# define workspace
 	# path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
@@ -392,6 +396,9 @@ def run_script(path=path):
 	# log.info("Script Ends ...")
 
 	time.sleep(3)
+
+	if batchmodeop:
+		Interpreter.batchMode = False
 
 	import gc
 	gc.collect()

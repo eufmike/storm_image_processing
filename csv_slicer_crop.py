@@ -2,9 +2,12 @@
 # slice the csv according to the frame size
 import os, sys
 import pandas as pd
+from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
+
 # from tkinter import *
 
 # Functions Section Begins ----------------------------------------------------- #
+'''
 def dircheck(targetpaths):
 	"""
 	dircheck checks the target folder and create the folder if it does not exist.
@@ -69,6 +72,7 @@ def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
 			pendingpathlist_output.append(os.path.join(op_dir, srcflbasename + op_ext))
 			
 	return (pendingfllist, pendingpathlist_input, pendingpathlist_output)
+'''
 # Functions Section Ends ----------------------------------------------------- #
 
 # create input path
@@ -90,7 +94,7 @@ dir_for_check.append(op_path)
 for i in range(nchannel):
 	dir_tmp = os.path.join(op_path, str(i+1))
 	dir_for_check.append(dir_tmp)
-dircheck(dir_for_check)
+DirCheck(dir_for_check)
 
 
 # %%

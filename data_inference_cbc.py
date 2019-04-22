@@ -231,10 +231,12 @@ for c in channel:
         width = 0.040
         # plt.errorbar(x, y, yerr = yerr, color = colors[m], alpha = 0.2)
         if m == 0:
-            plt.bar(x - width/2, y, width = width, yerr=yerr, capsize=2, color = colors[m])
+            plt.bar(x - width/2, y, width = width, yerr=yerr, capsize=2, color = colors[m], alpha = 0.2)
         else: 
-            plt.bar(x + width/2, y, width = width, yerr=yerr, capsize=2, color = colors[m])
+            plt.bar(x + width/2, y, width = width, yerr=yerr, capsize=2, color = colors[m], alpha = 0.2)
 
+    plt.legend(treatment)
+    
     fig.savefig(os.path.join(CBC_histo_sum_path, 'CBC_mean' + '_c' +  str(c+1) + '.png'))
     plt.close()
 

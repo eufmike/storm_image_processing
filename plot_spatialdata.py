@@ -52,16 +52,17 @@ spacialtestdir = 'spacial_test'
 csvdir = 'spacialdata'
 ip_path = os.path.join(path, analysis_dir, spacialtestdir, csvdir)
 
+plot_dir = 'plot'
 opK_dir = 'plot_K'
 opL_dir = 'plot_L'
 opH_dir = 'plot_H'
 optotal_dir = 'plot_total'
 
 dir_for_check = []
-opK_path = os.path.join(path, analysis_dir, spacialtestdir, opK_dir)
-opL_path = os.path.join(path, analysis_dir, spacialtestdir, opL_dir)
-opH_path = os.path.join(path, analysis_dir, spacialtestdir, opH_dir)
-optotal_path = os.path.join(path, analysis_dir, spacialtestdir, optotal_dir)
+opK_path = os.path.join(path, analysis_dir, spacialtestdir, plot_dir, opK_dir)
+opL_path = os.path.join(path, analysis_dir, spacialtestdir, plot_dir, opL_dir)
+opH_path = os.path.join(path, analysis_dir, spacialtestdir, plot_dir, opH_dir)
+optotal_path = os.path.join(path, analysis_dir, spacialtestdir, plot_dir, optotal_dir)
 dir_for_check.append(opK_path)
 dir_for_check.append(opL_path)
 dir_for_check.append(opH_path)
@@ -209,11 +210,26 @@ data_grouped_mean = data_total.groupby(by = ['channel', 'group', 'r']).mean()
 print(data_grouped_mean)
 data_grouped_sem = data_total.groupby(by = ['channel', 'group', 'r']).sem()
 print(data_grouped_sem)
+
+
+
 # %%
+variable_name = {
+    'K_r': 'K(r)',
+    'L_r': 'L(r)',
+    'H_r': 'H(r)',
+}
 # plot mean and SEM for K_r, L_r and H_r
 for c in channel:
     for var in variable:
-        fig, axes = plt.subplots()
+
+        dpi = 300
+        fig = plt.figure(dpi = dpi)
+        fig.set_figheight(5)
+        fig.set_figwidth(5)
+        
+        axes = plt.subplot(111)
+
         colors = ['red', 'blue']
         for m in range(len(treatment)):
             data_mean_temp = data_grouped_mean.loc[str(c+1), treatment[m]]
@@ -222,15 +238,18 @@ for c in channel:
             data_sem_temp = data_grouped_sem.loc[str(c+1), treatment[m]]
             yerr = data_sem_temp.reset_index()[var]
             plt.errorbar(x, y, yerr = yerr, color = colors[m], alpha = 0.2)
+            
+        plt.legend(treatment)
+        plt.gcf().subplots_adjust(left=0.15)
+        plt.xlabel('Radius (nm)')
+        plt.ylabel(variable_name[var])
+        axes.spines['right'].set_visible(False)
+        axes.spines['top'].set_visible(False)
+        axes.set_xlim(0, 2500)
 
         fig.savefig(os.path.join(optotal_path, var + '_mean_c' +  str(c+1) + '.png'))
-        axes.set_xlim(0, 2500)
-        optotal_path
         plt.close()
 
 
-print(data_x.reset_index()['r'])
 
-# %%
-print(1+1)
 
