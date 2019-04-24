@@ -33,17 +33,19 @@ csvdata_dir = str(sys.argv[4])
 nchannel = int(sys.argv[5])
 frame_start = int(sys.argv[6])
 frame_end = int(sys.argv[7])
+op_dir = str(sys.argv[8])
 
 ip_path = os.path.join(path, analysis_dir, analysis_subdir, csvdata_dir)
 
 # create output path
 dir_for_check = []
-op_dir = 'csvdata_sliced'
+# op_dir = 'csvdata_sliced'
 op_path = os.path.join(path, analysis_dir, analysis_subdir, op_dir)
 dir_for_check.append(op_path)
 for i in range(nchannel):
 	dir_tmp = os.path.join(op_path, str(i+1))
 	dir_for_check.append(dir_tmp)
+print(dir_for_check)
 DirCheck(dir_for_check)
 
 # %%
@@ -59,7 +61,9 @@ for i in range(nchannel):
 	pendingpathlist_input = pendingpathlist_input + pendingpathlist_input_tmp
 	pendingpathlist_output = pendingpathlist_output + pendingpathlist_output_tmp
 # print(pendingfllist)
+print('pendingpathlist_input')
 print(pendingpathlist_input)
+print('pendingpathlist_output')
 print(pendingpathlist_output)
 
 # %%

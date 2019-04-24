@@ -8,7 +8,7 @@ region = 3
 
 # define input folders
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
+analysis_dir = 'analysis_20190419'
 sub_dir = 'tstorm'
 inp_dir = 'csvdata_crop'
 # create input path
