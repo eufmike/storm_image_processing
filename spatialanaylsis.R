@@ -2,6 +2,9 @@ library(spatstat)
 library(ggplot2)
 library(dplyr)
 
+# preparing
+print('Preparing...')
+
 # parameters
 nchannel = 2
 region = 3
@@ -23,6 +26,7 @@ opbi_dir = 'spacialdata_bi'
 opkest_path = file.path(path, analysis_dir, op_dir, opkest_dir)
 opbi_path = file.path(path, analysis_dir, op_dir, opbi_dir)
 
+# create path 
 for (c in 1:nchannel){
         print(c)
         if (!file.exists(file.path(opkest_path, c))){
@@ -31,7 +35,6 @@ for (c in 1:nchannel){
         if (!file.exists(file.path(opbi_path, c))){
                 dir.create(file.path(opbi_path, c), recursive =T)
         }
-        
 }
 
 # import cropsize.csv
@@ -45,14 +48,8 @@ print(data)
 data_mod = mutate(data, filename = paste(name, '_r',img, '.csv', sep = ''))
 print(data_mod)
 
-
-#data_crop = data[data$name == '2018_06_18_w1',]
-#print(data_crop)
-
-
-
 # create filelist
-filelist <- list.files(inputpath)
+filelist <- list.files(ippath)
 print(filelist)
 ippathlist <- vector()
 oppathkest_list <- vector()
@@ -70,7 +67,6 @@ for (c in 1:nchannel){
 print(ippathlist)
 print(oppathkest_list)
 print(oppathbi_list)
-
 
 # process data
 for (i in 1:length(ippathlist)){
@@ -118,3 +114,5 @@ for (i in 1:length(ippathlist)){
                  
 }      
 
+# preparing
+print('End script')
