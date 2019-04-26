@@ -5,23 +5,34 @@ library(dplyr)
 # preparing
 print('Preparing...')
 
-# parameters
-nchannel = 2
-region = 3
+# path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
+# analysis_dir = 'analysis_20190419'
+# sub_dir = 'tstorm'
+# inp_dir = 'csvdata_crop'
 
+args <- commandArgs(TRUE)
+print(args)
 # define input folders
-path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190419'
-sub_dir = 'tstorm'
-inp_dir = 'csvdata_crop'
+path = as.character(args[1])
+analysis_dir = as.character(args[2])
+sub_dir = as.character(args[3])
+inp_dir = as.character(args[4])
+# parameters
+nchannel = as.integer(args[5])
+region = as.integer(args[6])
+
 # create input path
 ippath <- file.path(path, analysis_dir, sub_dir, inp_dir)
 print(ippath)
 
 # define output folders
-op_dir = 'spacial_test'
-opkest_dir = 'spacialdata'
-opbi_dir = 'spacialdata_bi'
+# op_dir = 'spacial_test'
+# opkest_dir = 'spacialdata'
+# opbi_dir = 'spacialdata_bi'
+op_dir = as.character(args[7])
+opkest_dir = as.character(args[8])
+opbi_dir = as.character(args[9])
+
 
 opkest_path = file.path(path, analysis_dir, op_dir, opkest_dir)
 opbi_path = file.path(path, analysis_dir, op_dir, opbi_dir)

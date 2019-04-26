@@ -1,8 +1,8 @@
 #@ UIService uiService
 #@ LogService log
-#@ String(label="Name of the Analysis", value = "analysis_20190308", persist=false) dir_output
-#@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
-#@ String(label="Folder for raw images", value = "03_testdata", persist=false) dir_srcimg
+#@ File(label="Select the main directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/", persist=false) path
+#@ String(label="Name of Analysis Folder", value = "analysis_20190419", persist=false) dir_output
+#@ File(label="Folder for input images", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/resource/testdata", persist=false) ippath
 #@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 
 print('Script Starts')
@@ -167,7 +167,7 @@ def run_script(path=path):
 	import gc
 	path = str(path)
 	
-	# Prepare workspace ========================= #
+	# Prepare workspace ------------------------------------------------------ #
 	print('Preparing ...')
 	# log.info('Preparing ...')
 
@@ -188,11 +188,7 @@ def run_script(path=path):
 	pathlist.append(path_temp)
 
 	# define input folder
-	dir_src = 'resource'
-	# dir_srcimg = '03_testdata'
-
-	# create input path
-	path_srcimg = os.path.join(path, dir_src, dir_srcimg)
+	path_srcimg = str(ippath)
 	print(path_srcimg)
 
 	# define output folder

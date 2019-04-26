@@ -1,9 +1,8 @@
 #@ UIService uiService
 #@ LogService log
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
-#@ String(label="Folder for output", value = "analysis_20190308", persist=false) dir_output
-#@ String(label="Folder for raw images", value = "03_testdata", persist=false) dir_srcimg
-#@ String(label="Folder for tif images", value = "preproimg", persist=false) dir_preproimg
+#@ String(label="Folder for output", value = "analysis_20190419", persist=false) dir_output
+#@ File(label="Folder for input images", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/preprocessing/preproimg", persist=false) ippath
 #@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 print('Script Starts')
 print('Importing modules ...')
@@ -200,7 +199,7 @@ def run_script(path=path):
 
 	# dir_imgmetadata 
 	# create input path
-	path_srcimg = os.path.join(path, dir_output, dir_preprocessing, dir_preproimg)
+	path_srcimg = str(ippath)
 	path_imgstat = os.path.join(path, dir_output, dir_preprocessing, dir_imginfo, file_imgstat)
 	# print("path_srcimg")
 	# print(path_srcimg)

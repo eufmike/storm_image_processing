@@ -85,15 +85,19 @@ def GetGrpFLs(filenamelist, nchannels, group: dict, ippath: dict, oppath: dict):
 					filename_tmp.append(found)
 				except AttributeError:
 					found = ''
+			
+			# append to the main file list
+			mainflls[str(c+1)][g]['filename_ip'] = filename_tmp
 
 			# create input filelist and input path
-			filepath_ip = []
-			for f in filename_tmp: 
-				filepath_ip_tmp =  os.path.join(ippath['dir'], str(c+1), f + ippath['ext'])
-				filepath_ip.append(filepath_ip_tmp)
-			
-			mainflls[str(c+1)][g]['filename_ip'] = filename_tmp
-			mainflls[str(c+1)][g]['filepath_ip'] = filepath_ip
+			for key in ippath.keys():
+				filepath_ip = []
+				for f in filename_tmp: 
+					filename_ip_tmp = f + ippath[key]['ext']
+					path_ip_tmp = os.path.join(ippath[key]['dir'], str(c+1), filename_ip_tmp)
+					filepath_ip.append(path_ip_tmp)
+				# append to the main file list by key
+				mainflls[str(c+1)][g][key] = filepath_ip
 
 			filepath_op = {}
 
@@ -101,10 +105,10 @@ def GetGrpFLs(filenamelist, nchannels, group: dict, ippath: dict, oppath: dict):
 			for key in oppath.keys():
 				filepath_op = []
 				for f in filename_tmp:	
-					filename_op_tmp = f.replace(ippath['ext'], oppath[key]['ext'])
+					filename_op_tmp = f + oppath[key]['ext']
 					path_op_tmp = os.path.join(oppath[key]['dir'], str(c+1), filename_op_tmp)
 					filepath_op.append(path_op_tmp)
-
+				# append to the main file list by key
 				mainflls[str(c+1)][g][key] = filepath_op	
 
 	return(mainflls)
