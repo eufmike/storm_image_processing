@@ -163,7 +163,7 @@ for c in range(nchannel):
                 print(data_plot)
                 plt.plot(data_plot['r'], data_plot[val['colname']], color = colors[g], alpha = 0.2)
         
-        fig.savefig(os.path.join(optotal_path, val['colname'] + '_c' +  str(c+1) + '.png'))
+        fig.savefig(os.path.join(optotal_path, val['colname'] + '_all_c' +  str(c+1) + '.png'))
         axes.set_xlim(0, 2500)
         optotal_path
         plt.close()

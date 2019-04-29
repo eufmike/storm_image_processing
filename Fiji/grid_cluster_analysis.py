@@ -1,10 +1,10 @@
 #@ UIService uiService
 #@ LogService log
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=true) path_j
-#@ String(label="Folder for output", value = "analysis_20190308", persist=false) dir_output
-#@ File(label="Directory for input image", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190308/spacial_test/spacialdata_local_pad_grid", persist=true) ippath_j
-#@ File(label="Directory for output binary image", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190308/spacial_test/nnd/int_grid_bi", persist=true) op_bi_path_j
-#@ File(label="Directory for data", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190308/spacial_test/nnd/int_grid_data", persist=true) op_data_path_j
+#@ String(label="Folder for output", value = "analysis_20190419", persist=false) dir_output
+#@ File(label="Directory for input image", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/spacial_test/plot_local_pad_grid", persist=true) ippath_j
+#@ File(label="Directory for output binary image", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/spacial_test/nnd/int_grid_bi", persist=true) op_bi_path_j
+#@ File(label="Directory for data", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/spacial_test/nnd/int_grid_data", persist=true) op_data_path_j
 #@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 print('Script Starts')
 print('Importing modules ...')
@@ -267,5 +267,5 @@ if __name__ in ['__builtin__','__main__']:
 	run_script()
 	print("Script Ends ...")
 	# quit script after running the script
-	# from java.lang import System
-	# System.exit(0)
+	from java.lang import System
+	System.exit(0)

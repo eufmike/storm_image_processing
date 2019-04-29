@@ -1,17 +1,17 @@
 # %%
 import os, sys
-import re
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import re
+import pprint
 
-from numpy import linspace, meshgrid
-from scipy.interpolate import griddata
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+from matplotlib import style as styl
 import matplotlib.image as mpimg
-import matplotlib.style
-import matplotlib as mpl
-mpl.style.use('default')
-from PIL import Image
+styl.use('default')
+
 from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 
 # %%
@@ -55,18 +55,37 @@ nchannels = 2
 dir_check = []
 
 # %%
-# input folder
+'''
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
-spacialtest_dir = 'spacial_test'
+analysis_dir = 'analysis_20190419'
+analysis_subdir = 'tstorm'
+st_dir = 'spacial_test'
 nnd_dir = 'nnd'
 nnd_data_dir = 'int_grid_data_filtered'
-nnd_data_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_dir)
+nchannel = 2 
+crop_region = 3
+pad_pixel = 3
+nnd_data_dist_dir = 'int_grid_data_dist'
+'''
+
+path = str(sys.argv[1])
+analysis_dir = str(sys.argv[2])
+analysis_subdir = str(sys.argv[3])
+st_dir = str(sys.argv[4])
+nnd_dir = str(sys.argv[5])
+nnd_data_dir = str(sys.argv[6])
+nchannel = int(sys.argv[7])
+crop_region = int(sys.argv[8])
+pad_pixel = int(sys.argv[9])
+nnd_data_dist_dir = str(sys.argv[10])
+
+# input folder
+nnd_data_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_dir)
 print(nnd_data_path)
 
 # output folder
 nnd_data_dist_dir = 'int_grid_data_dist'
-nnd_data_dist_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_dist_dir)
+nnd_data_dist_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_dist_dir)
 
 for c in range(nchannels):
     dir_check.append(os.path.join(nnd_data_dist_path, str(c+1)))

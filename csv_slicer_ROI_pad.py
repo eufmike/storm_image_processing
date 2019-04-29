@@ -2,9 +2,11 @@
 # slice the csv according to the frame size
 import os, sys
 import pandas as pd
+from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 # from tkinter import *
 
 # Functions Section Begins ----------------------------------------------------- #
+'''
 def dircheck(targetpaths):
 	"""
 	dircheck checks the target folder and create the folder if it does not exist.
@@ -69,10 +71,12 @@ def getpendinglist(src_dir, op_dir, src_ext = '.nd2', op_ext = '.csv'):
 			pendingpathlist_output.append(os.path.join(op_dir, srcflbasename + op_ext))
 			
 	return (pendingfllist, pendingpathlist_input, pendingpathlist_output)
+'''
 # Functions Section Ends ----------------------------------------------------- #
 # %%
 # create input path
 # load the csv file
+'''
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
 analysis_dir = 'analysis_20190308'
 analysis_subdir = 'tstorm'
@@ -80,19 +84,28 @@ csvdata_dir = 'csvdata_sliced'
 nchannel = 2 
 crop_region = 3
 pad_pixel = 3
+'''
+
+path = str(sys.argv[1])
+analysis_dir = str(sys.argv[2])
+analysis_subdir = str(sys.argv[3])
+csvdata_dir = str(sys.argv[4])
+nchannel = int(sys.argv[5])
+crop_region = int(sys.argv[6])
+pad_pixel = int(sys.argv[7])
+op_dir = str(sys.argv[8])
 
 ip_path = os.path.join(path, analysis_dir, analysis_subdir, csvdata_dir)
 
 # create output path
 dir_for_check = []
-op_dir = 'csvdata_crop_pad'
 op_path = os.path.join(path, analysis_dir, analysis_subdir, op_dir)
 print(op_path)
 dir_for_check.append(op_path)
 for i in range(nchannel):
 	dir_tmp = os.path.join(op_path, str(i+1))
 	dir_for_check.append(dir_tmp)
-dircheck(dir_for_check)
+DirCheck(dir_for_check)
 
 
 # %%
@@ -100,13 +113,13 @@ dircheck(dir_for_check)
 dir_par = 'par'
 path_cropdata = os.path.join(path, analysis_dir, dir_par, 'cropsize.csv')
 df_cropdata = pd.read_csv(path_cropdata, header = 0)
-display(df_cropdata)
+# display(df_cropdata)
 
 # %%
 # load image stat
 path_imgstat = os.path.join(path, analysis_dir, 'preprocessing', 'imginfo', 'imgstat.csv')
 df_imgstat = pd.read_csv(path_imgstat, header = 0)
-display(df_imgstat)
+# display(df_imgstat)
 
 # %%
 # covert ROI in pixel to µm
@@ -118,7 +131,7 @@ df_cropdata['x_max_nm'] = df_cropdata['x_min_nm'] + df_cropdata['dx_nm']
 df_cropdata['y_max_nm'] = df_cropdata['y_min_nm'] + df_cropdata['dy_nm']
 print(df_cropdata['dx_nm'])
 
-display(df_cropdata)
+# display(df_cropdata)
 print(df_cropdata.shape[0])
 # %%
 # slice the csv file

@@ -7,13 +7,29 @@ nchannel = 2
 region = 3
 
 # define input folders
-path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
-sub_dir = 'tstorm'
-inp_dir = 'csvdata_crop'
+# path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
+# analysis_dir = 'analysis_20190308'
+# sub_dir = 'tstorm'
+# inp_dir = 'csvdata_crop'
+
+args <- commandArgs(TRUE)
+print(args)
+# define input folders
+path = as.character(args[1])
+analysis_dir = as.character(args[2])
+sub_dir = as.character(args[3])
+inp_dir = as.character(args[4])
+# parameters
+nchannel = as.integer(args[5])
+region = as.integer(args[6])
+
 # create input path
 ippath <- file.path(path, analysis_dir, sub_dir, inp_dir)
 print(ippath)
+
+# define output folders
+op_dir = as.character(args[7])
+opkest_dir = as.character(args[8])
 
 # define output folders
 op_dir = 'spacial_test'
@@ -48,7 +64,7 @@ data_mod = mutate(data, filename = paste(name, '_r',img, '.csv', sep = ''))
 print(data_mod)
 
 # create filelist
-filelist <- list.files(inputpath)
+filelist <- list.files(ippath)
 print(filelist)
 ippathlist <- vector()
 oppathkest_list <- vector()

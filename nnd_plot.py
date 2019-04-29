@@ -1,21 +1,20 @@
 # %%
-%load_ext autoreload
-%autoreload 2
+# %load_ext autoreload
+# %autoreload 2
 
 import os, sys
-import re
-import pprint
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import re
+import pprint
 
-from numpy import linspace, meshgrid
-from scipy.interpolate import griddata
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+from matplotlib import style as styl
 import matplotlib.image as mpimg
-import matplotlib.style
-import matplotlib as mpl
-mpl.style.use('default')
-from PIL import Image
+styl.use('default')
+
 from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 
 # %%
@@ -23,24 +22,45 @@ from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 
 # Grouped by the channels and treatment ------------------------------------------ #
 # %%
-nchannels = 2
-dir_check = []
 pixelsize = 0.01 # 0.01 µm/pixel
 
 # %%
 # input folder
+
+'''
 path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
-spacialtest_dir = 'spacial_test'
+analysis_dir = 'analysis_20190419'
+analysis_subdir = 'tstorm'
+st_dir = 'spacial_test'
 nnd_dir = 'nnd'
-nnd_data_dir = 'int_grid_data_dist'
-nnd_data_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_dir)
+nnd_data_dist_dir = 'int_grid_data_dist'
+nchannel = 2 
+crop_region = 3
+pad_pixel = 3
+pixelsize = 0.01
+nnd_plot_dir = 'int_grid_data_nndplot'
+'''
+
+path = str(sys.argv[1])
+analysis_dir = str(sys.argv[2])
+analysis_subdir = str(sys.argv[3])
+st_dir = str(sys.argv[4])
+nnd_dir = str(sys.argv[5])
+nnd_data_dist_dir = str(sys.argv[6])
+nchannel = int(sys.argv[7])
+crop_region = int(sys.argv[8])
+pad_pixel = int(sys.argv[9])
+pixelsize = float(sys.argv[10])
+nnd_plot_dir = str(sys.argv[11])
+
+# input path
+nnd_data_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_dist_dir)
 print(nnd_data_path)
 
 # output folder
-nnd_plot_dir = 'int_grid_data_nndplot'
-nnd_plot_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_plot_dir)
+nnd_plot_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_plot_dir)
 
+dir_check = []
 dir_check.append(nnd_plot_path)
 DirCheck(dir_check)
 
@@ -51,8 +71,10 @@ group = {
     'knockout': 'k'
 }
 ippath = {
-    'dir': nnd_data_path,
-    'ext': '.csv'
+    'nnddata':{
+        'dir': nnd_data_path,
+        'ext': '.csv',
+    }
 }
 
 oppath = {
@@ -65,15 +87,15 @@ oppath = {
 # %%
 # create filenamelist
 filenamelist = ListFiles(os.path.join(nnd_data_path, str(1)), '.csv')['filelist']
-mainfilelist = GetGrpFLs(filenamelist, nchannels, group, ippath, oppath)
+mainfilelist = GetGrpFLs(filenamelist, nchannel, group, ippath, oppath)
 pprint.pprint(mainfilelist)
 
 # concate the data into one dataframe
 data_list = []
-for c in range(nchannels):
+for c in range(nchannel):
     for g in group.keys():
             for i in range(len(mainfilelist[str(c+1)][g]['filename_ip'])):
-                filepath = mainfilelist[str(c+1)][g]['filepath_ip'][i]
+                filepath = mainfilelist[str(c+1)][g]['nnddata'][i]
                 data = pd.read_csv(filepath, header=0, index_col = 0)
                 data['filename'] = mainfilelist[str(c+1)][g]['filename_ip'][i]
                 data['group'] = g
@@ -91,11 +113,11 @@ data_total['Area_nm2'] = data_total['Area'] * (pixelsize * 10**3)**2
 data_total['min_dist_nm'] = data_total['min_dist'] * pixelsize * 10**3
 
 print(data_total.dtypes)
-display(data_total)
+#display(data_total)
 
 # %%
 # plot merge nnd histogram with Area
-for c in range(nchannels):
+for c in range(nchannel):
     # print('channel: {}'.format(c))
     
     dpi = 300
@@ -134,14 +156,13 @@ for c in range(nchannels):
     axes.spines['right'].set_visible(False)
     axes.spines['top'].set_visible(False)
     
-    
     figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nnd.png")
     fig.savefig(figop)
     plt.close()
 
 # %%
 # mean nnd distance
-for c in range(nchannels):
+for c in range(nchannel):
     
     dpi = 300
     fig = plt.figure(dpi = dpi)
@@ -151,12 +172,12 @@ for c in range(nchannels):
     ## size of nnd
     data_temp_c = data_total[data_total['channel'] == str(c+1)]
     data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['min_dist_nm'].mean()
-    display(data_temp_c_group)
+    # display(data_temp_c_group)
     data_temp_c_mean = data_temp_c_group.reset_index()
     data_temp_c_mean_group = data_temp_c_mean.groupby(by = "group").mean()
     data_temp_c_sem_group = data_temp_c_mean.groupby(by = "group").sem()
-    display(data_temp_c_mean_group['min_dist_nm'])
-    display(data_temp_c_sem_group['min_dist_nm'])
+    # display(data_temp_c_mean_group['min_dist_nm'])
+    # display(data_temp_c_sem_group['min_dist_nm'])
 
     ## make plot    
     ax1 = plt.subplot(111)
@@ -180,7 +201,7 @@ for c in range(nchannels):
 
 # %%
 # plot nanocluster areas
-for c in range(nchannels):
+for c in range(nchannel):
     
     dpi = 300
     fig = plt.figure(dpi = dpi)
@@ -190,12 +211,12 @@ for c in range(nchannels):
     ## size of nano cluster
     data_temp_c = data_total[data_total['channel'] == str(c+1)]
     data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['Area_nm2'].mean()
-    display(data_temp_c_group)
+    # display(data_temp_c_group)
     data_temp_c_mean = data_temp_c_group.reset_index()
     data_temp_c_mean_group = data_temp_c_mean.groupby(by = "group").mean()
     data_temp_c_sem_group = data_temp_c_mean.groupby(by = "group").sem()
-    display(data_temp_c_mean_group['Area_nm2'])
-    display(data_temp_c_sem_group['Area_nm2'])
+    # display(data_temp_c_mean_group['Area_nm2'])
+    # display(data_temp_c_sem_group['Area_nm2'])
 
     ## make plot    
     ax1 = plt.subplot(121)
@@ -222,11 +243,11 @@ for c in range(nchannels):
     data_temp_c = data_total[data_total['channel'] == str(c+1)]
     data_temp_c_group = data_temp_c.groupby(by= ['group','filename'])['Area_nm2'].agg('count')
     data_temp_c_count = data_temp_c_group.reset_index()
-    display(data_temp_c_count)
+    # display(data_temp_c_count)
     data_temp_c_count_mean_group = data_temp_c_count.groupby(by = "group").mean()
     data_temp_c_count_sem_group = data_temp_c_count.groupby(by = "group").sem()
-    display(data_temp_c_count_mean_group['Area_nm2'])
-    display(data_temp_c_count_sem_group['Area_nm2'])
+    # display(data_temp_c_count_mean_group['Area_nm2'])
+    # display(data_temp_c_count_sem_group['Area_nm2'])
 
     ## make plot    
     ax2 = plt.subplot(122)
@@ -246,11 +267,3 @@ for c in range(nchannels):
     figop = os.path.join(nnd_plot_path, "summary_c" + str(c+1) + "_nanocluster.png")
     fig.savefig(figop)
     plt.close()
-
-    
-    
-    
-    
-    
-
-# plot nanocluster density

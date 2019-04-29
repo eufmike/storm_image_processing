@@ -1,21 +1,19 @@
 # %%
-%load_ext autoreload
-%autoreload 2
-
+# %load_ext autoreload
+# %autoreload 2
 import os, sys
-import re
-import pprint
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import re
+import pprint
 
-from numpy import linspace, meshgrid
-from scipy.interpolate import griddata
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+from matplotlib import style as styl
 import matplotlib.image as mpimg
-import matplotlib.style
-import matplotlib as mpl
-mpl.style.use('default')
-from PIL import Image
+styl.use('default')
+
 from core.fileop import DirCheck, ListFiles, GetPendingList, GetGrpFLs
 
 # %%
@@ -34,28 +32,51 @@ def FltByMaxMin(data, key, filterpar):
     return data_flt
 
 # Grouped by the channels and treatment ------------------------------------------ #
+#%%
+'''
+path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
+analysis_dir = 'analysis_20190419'
+analysis_subdir = 'tstorm'
+st_dir = 'spacial_test'
+nnd_dir = 'nnd'
+nnd_data_dir = 'int_grid_data'
+nchannel = 2 
+crop_region = 3
+pad_pixel = 3
+nnd_data_summary_dir = 'int_grid_data_summary'
+nnd_data_flt_dir = 'int_grid_data_filtered'
+'''
+
+path = str(sys.argv[1])
+analysis_dir = str(sys.argv[2])
+analysis_subdir = str(sys.argv[3])
+st_dir = str(sys.argv[4])
+nnd_dir = str(sys.argv[5])
+nnd_data_dir = str(sys.argv[6])
+nchannel = int(sys.argv[7])
+crop_region = int(sys.argv[8])
+pad_pixel = int(sys.argv[9])
+nnd_data_summary_dir = str(sys.argv[10])
+nnd_data_flt_dir = str(sys.argv[11])
+
+
 # %%
-nchannels = 2
 dir_check = []
 
 # %%
 # input folder
-path = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging'
-analysis_dir = 'analysis_20190308'
-spacialtest_dir = 'spacial_test'
-nnd_dir = 'nnd'
-nnd_data_dir = 'int_grid_data'
-nnd_data_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_dir)
+
+nnd_data_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_dir)
 print(nnd_data_path)
 
 # output folder
 nnd_data_summary_dir = 'int_grid_data_summary'
-nnd_data_summary_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_summary_dir)
+nnd_data_summary_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_summary_dir)
 print(nnd_data_summary_path)
 nnd_data_flt_dir = 'int_grid_data_filtered'
-nnd_data_flt_path = os.path.join(path, analysis_dir, spacialtest_dir, nnd_dir, nnd_data_flt_dir)
+nnd_data_flt_path = os.path.join(path, analysis_dir, st_dir, nnd_dir, nnd_data_flt_dir)
 
-for c in range(nchannels):
+for c in range(nchannel):
     dir_check.append(os.path.join(nnd_data_flt_path, str(c+1)))
 
 dir_check.append(nnd_data_summary_path)
@@ -69,8 +90,10 @@ group = {
     'knockout': 'k'
 }
 ippath = {
-    'dir': nnd_data_path,
-    'ext': '.csv'
+    'nnddata':{
+        'dir': nnd_data_path,
+        'ext': '.csv',
+    }
 }
 
 oppath = {
@@ -83,15 +106,15 @@ oppath = {
 # %%
 # create filenamelist
 filenamelist = ListFiles(os.path.join(nnd_data_path, str(1)), '.csv')['filelist']
-mainfilelist = GetGrpFLs(filenamelist, nchannels, group, ippath, oppath)
+mainfilelist = GetGrpFLs(filenamelist, nchannel, group, ippath, oppath)
 pprint.pprint(mainfilelist)
 
 # concate the data into one dataframe
 data_list = []
-for c in range(nchannels):
+for c in range(nchannel):
     for g in group.keys():
             for i in range(len(mainfilelist[str(c+1)][g]['filename_ip'])):
-                filepath = mainfilelist[str(c+1)][g]['filepath_ip'][i]
+                filepath = mainfilelist[str(c+1)][g]['nnddata'][i]
                 data = pd.read_csv(filepath, header=0, index_col = 0)
                 data['filename'] = mainfilelist[str(c+1)][g]['filename_ip'][i]
                 data['group'] = g
@@ -109,9 +132,20 @@ print(data_total.dtypes)
 
 # %%
 # plot merge histogram with Area
-for c in range(nchannels):
+for c in range(nchannel):
+    print(data_total['channel'])
     print('channel: {}'.format(c))
+    data_temp = data_total[data_total['channel'] == str(c+1)]
     
+    # prepare binning (bin_list)
+    area_max = max(data_temp['Area'])
+    print('area_max: {}'.format(area_max))
+    binsize = 50
+    area_bin_max = area_max//binsize
+    print('area_bin_max: {}'.format(area_bin_max))
+    bin_list = list(range(0, (int(area_bin_max) + 2) * binsize, binsize))
+    print(bin_list)
+
     fig, axes = plt.subplots()
     fig.set_figheight(5)
     fig.set_figwidth(12)
@@ -120,13 +154,11 @@ for c in range(nchannels):
         'knockout':'blue'
     }
 
-    for g in group.keys():
-        print(data_total['channel'])
-        data_temp = data_total[data_total['channel'] == str(c+1)]
-        data_temp = data_temp[data_temp['group'] == g]
-        display(data_temp)
+    for g in group.keys():  
+        data_temp_g = data_temp[data_temp['group'] == g]
+        # display(data_temp)
         
-        plt.hist(data_temp['Area'], bins = 100, color = colors[g], alpha = 0.2)
+        plt.hist(data_temp_g['Area'], bins = bin_list, color = colors[g], alpha = 0.2)
         plt.yscale('log')
 
     figop = os.path.join(nnd_data_summary_path, "summary_c" + str(c+1) + "_area.png")
@@ -142,7 +174,7 @@ op_ext = '.csv'
 flnamels = []
 flpth_ip = []
 flpth_op = []
-for c in range(nchannels):
+for c in range(nchannel):
 	src_dir = os.path.join(nnd_data_path, str(c+1))
 	op_dir = os.path.join(nnd_data_flt_path, str(c+1))
 	flnamels_tmp, flpth_ip_tmp, flpth_op_tmp = GetPendingList(src_dir, op_dir, src_ext = '.csv', op_ext = '.csv')
