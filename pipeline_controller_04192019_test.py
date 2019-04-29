@@ -396,7 +396,7 @@ print(shellcmd)
 process = subprocess.run(shellcmd, shell = True, check=True)
 print("End: {}".format(script_name))
 
-#%%
+#%% [markdown]
 # ## Script name: `nnd_cluster_analysis.py` 
 # * env: Python
 # * rewritten: 04/29/2019
@@ -419,7 +419,7 @@ print(shellcmd)
 process = subprocess.run(shellcmd, shell = True, check=True)
 print("End: {}".format(script_name))
 
-#%%
+#%% [markdown]
 # ## Script name: `nnd_plot.py` 
 # * env: Python
 # * rewritten: 04/29/2019
@@ -485,14 +485,14 @@ arg_dict = {
 arg = dict2arg_fiji(arg_dict)
 print(arg)
 
-#%%
+#%% 
 subdir = 'Fiji'
 scriptpath = os.path.join(codepath, subdir, script_name)
 print("Start running: {}".format(script_name))
 subprocess.check_output([fiji, '--ij2', '--run', scriptpath, arg])
 print("End: {}".format(script_name))
 
-#%%
+#%% [markdown]
 # ## Script name: `data_inference_cbc.py` 
 # * env: Python
 # * rewritten: 04/29/2019
