@@ -1,13 +1,9 @@
 #@ UIService uiService
 #@ LogService log
 #@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging", persist=false) path
-#@ String(label="Folder for output", value = "analysis_20190308", persist=false) dir_output
-#@ String(label="Folder for raw images", value = "resource", persist=false) dir_srcimg
-#@ String(label="Folder for raw images", value = "03_testdata", persist=false) subdir_srcimg
-#@ String(label="Folder for tif images", value = "preproimg", persist=false) dir_preproimg
-#@ String(label="Folder for input .csv", value = "tstorm", persist=false) ip_dir
-#@ String(label="Subfolder for input .csv", value = "csvdata_crop", persist=false) ip_subdir
-#@ String(label="Folder for CBC output .csv", value = "spacial_test", persist=false) op_dir
+#@ String(label="Folder for output", value = "analysis_20190419", persist=false) dir_output
+#@ File(label="Select a directory", style="directory", value="/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/tstorm/csvdata_sliced_T_ROI", persist=false) ippath_j
+#@ String(label="folder for CBC output .csv", value = "CBC", persist=false) op_dir
 #@ String(label="Subfolder for CBC output .csv", value = "CBC_results", persist=false) op_subdir
 #@ Boolean(label="Batchmode", value=false, persist=true) batchmodeop
 
@@ -102,7 +98,8 @@ def run_script(path=path):
 	if batchmodeop:
 		Interpreter.batchMode = True
 	
-	ip_path = os.path.join(path, dir_output, ip_dir, ip_subdir)
+	#ip_path = os.path.join(path, dir_output, ip_dir, ip_subdir)
+	ip_path = str(ippath_j)
 	op_path = os.path.join(path, dir_output, op_dir, op_subdir)
 	
 	for c in range(nchannels): 
