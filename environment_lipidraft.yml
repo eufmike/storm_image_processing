@@ -3,7 +3,6 @@ channels:
   - r
   - anaconda
   - conda-forge
-  - bioconda
   - defaults
 dependencies:
   - _r-mutex=1.0.0=anacondar_1
@@ -15,7 +14,7 @@ dependencies:
   - bleach=3.1.0=py37_0
   - bwidget=1.9.11=1
   - bzip2=1.0.6=h1de35cc_1002
-  - ca-certificates=2019.1.23=0
+  - ca-certificates=2019.3.9=hecc5488_0
   - cairo=1.16.0=h9247486_1000
   - cctools=895=1
   - certifi=2019.3.9=py37_0
@@ -117,7 +116,7 @@ dependencies:
   - opencv=4.1.0=py37h0cb0d9f_0
   - openh264=1.8.0=hd9629dc_1000
   - openjdk=8.0.192=h1de35cc_1003
-  - openssl=1.1.1=h1de35cc_0
+  - openssl=1.1.1b=h01d97ff_2
   - pandas=0.24.2=py37h0a44026_0
   - pandoc=2.7.2=0
   - pandocfilters=1.4.2=py37_1
@@ -208,7 +207,7 @@ dependencies:
   - r-odbc=1.1.5=r351h0a44026_0
   - r-openssl=1.3=r351hdb18a49_0
   - r-packrat=0.5.0=r351h6115d3f_1000
-  - r-pillar=1.3.1=r351h6115d3f_1000
+  - r-pillar=1.4.0=h6115d3f_0
   - r-pkgconfig=2.0.2=r351h6115d3f_1001
   - r-pki=0.1_5.1=r351h159158b_1002
   - r-plogr=0.2.0=r351h6115d3f_1001
@@ -249,17 +248,19 @@ dependencies:
   - r-stringr=1.4.0=r351h6115d3f_0
   - r-sys=3.1=r351h159158b_0
   - r-tensor=1.5=r351h6115d3f_1001
-  - r-tibble=2.1.1=r351h159158b_0
+  - r-tibble=1.4.2=r351h46e59ec_1002
   - r-tidyr=0.8.3=r351hf99fc2c_0
   - r-tidyselect=0.2.5=r351h466af19_1000
   - r-tinytex=0.12=r351h6115d3f_0
   - r-utf8=1.1.4=r351h46e59ec_1000
+  - r-vctrs=0.1.0=r351hc070d10_0
   - r-viridislite=0.3.0=r351hf348343_0
   - r-withr=2.1.2=r351h6115d3f_1000
   - r-xfun=0.6=r351h6115d3f_0
   - r-xml2=1.2.0=r351h466af19_1002
   - r-xtable=1.8_3=r351_2000
   - r-yaml=2.2.0=r351h46e59ec_1001
+  - r-zeallot=0.1.0=r351h6115d3f_0
   - readline=7.0=hcfe32e1_1001
   - rstudio=1.1.456=h04f5b5a_1
   - scipy=1.2.1=py37h1a1e112_0
