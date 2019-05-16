@@ -67,7 +67,8 @@ analysis_dir = 'analysis_20190419'
 #           * size_MB: size of the file
 #%%
 script_name = 'imgproc.py'
-ippath = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/resource/testdata'
+resource_img_dir = os.path.join('resource', 'testdata')
+ippath = os.path.join(datapath, resource_img_dir)
 opdir = 'preprocessing'
 oppath = os.path.join(datapath, analysis_dir, opdir)
 
@@ -106,9 +107,9 @@ print("End: {}".format(script_name))
 #   3. `histogram_plot` (`.tif`): histogram image with manification = 5.0
 #%%
 script_name = 'tstormanalysis.py'
-ippath = '/Volumes/LaCie_DataStorage/xiaochao_wei_STORM imaging/STORM_imaging/analysis_20190419/preprocessing/preproimg'
-opdir = 'preprocessing'
-opsubdir = 'preproimg'
+ipdir = 'preprocessing'
+ipsubdir = 'preproimg'
+ippath = os.path.join(datapath, analysis_dir, ipdir, ipsubdir)
 
 arg_dict = {
     'path': datapath,
