@@ -1,0 +1,240 @@
+digraph STROM_Chaser{
+    // Config the working layout
+    graph [fontname = "helvetica"];
+    node [fontname = "helvetica"];
+    edge [fontname = "helvetica"];
+    // Style of edge
+    splines = ortho;
+
+    //nodes
+    //preprocessing
+    rawimg [label= "STORM Image \n(.nd2)"];
+    img_prepro [label = <<B>Fiji</B><br />Image Processing<br />1. Split channel<br />2. Export stats<br />(/Fiji/imgproc.py)>, 
+                shape = box, style=filled;
+                color=lightblue];
+    preproimg [label = "proproimg(.tif)\n./preproimg"];
+    imgintensity [label = "imgintensity(.csv)\n./imgintensity"];
+    imgmetadata [label = "imgmetadata\n./imginfo/imgmetadata"];
+    imgstat [label = "imgstat (.csv)\n./imginfo/"];
+
+    //tSTORM analysis
+    tstormanalysis [label = <<B>Fiji</B><br />ThunderSTORM<br />Run STORM Analysis<br />(/Fiji/tstormanalysis.py)>, 
+                    shape = box, style=filled,
+                    color=lightblue];
+    csvdata [label="STORM_data\n(.csv, .txt)\n./csvdata"];
+    driftcorr [label="Drift Correction Profile\n(.json)\n./driftcorr"];
+    slicer_t [label = <<B>Python</B><br />Sliced by T<br />(csv_slicer.py)>, 
+                shape = box, style=filled,
+                color=PaleGreen];
+    csvdata_sliced_T [label = "STORM_data\nsliced_T\n./csvdata_sliced_T"];
+    cropsize [label = "cropsize\nmanual defined\n./par/cropsize.csv"]
+    slicer_r [label = <<B>Python</B><br />Sliced by R<br />3 regions per img<br />(csv_slicer_crop.py)>, 
+                shape = box, style=filled,
+                color=PaleGreen];
+    csvdata_sliced_T_ROI [label = "STORM_data\nsliced_R\n./csvdata_sliced_T_ROI"];
+    
+    //spacial analysis
+    spatialanalysis [label = <<B>R</B><br />Spatial Analysis<br />spatstat, K, L, H<br />(spatialanalysis.R)>, 
+                        shape = box, style=filled,
+                        color=sandybrown];
+    spatialdata [label = "spatialdata\n(.csv)\n Var: K_r, L_r, H_r\n./spacialdata"];
+    spatialdata_bi [label = "spatialdata_bi\n(.rda)\n./spacialdata_bi"];
+
+    //spacial analysis plot
+    plot_spatialdata [label = <<B>Python</B><br />Plot spatialdata<br />(plot_spatialdata.py)>, 
+                        shape = box, style=filled,
+                        color=PaleGreen];
+    plot_K [label = "Plot K_r\n(.png)\n./plot_K"];
+    plot_L [label = "Plot L_r\n(.png)\n./plot_L"];
+    plot_H [label = "Plot H_r\n(.png)\n./plot_H"];
+    plot_total [label = "Plot Summary\n(.png)\n./plot_total"];
+    
+    //CBC analysis
+    CBC_analysis [label = <<B>Fiji</B><br />CBC Analysis<br />(/Fiji/CBC.py)>, 
+                    shape = box, style=filled,
+                    color=lightblue];
+    CBC_results [label = "CBC results\n.csv\n.CBC_results"]
+    data_inference_cbc [label = <<B>Python</B><br />data_inf<br />CBC<br />(data_inference_cbc.py)>, 
+                            shape = box, style=filled,
+                            color=PaleGreen];
+    CBC_histogram [label = "CBC Histo\n./CBC_histogram"]
+    CBC_histogram_summary [label = "CBC Histo\n./CBC_histogram_summary"]
+
+    //data inference
+    data_inference_photon [label = <<B>Python</B><br />data_inf<br />photon<br />(data_inference_photon.py)>, 
+                            shape = box, style=filled,
+                            color=PaleGreen];
+    photons_hist [label = "photon histo\n./photons_hist"]
+    photons_hist_summary [label = "photon histo\nsummary\n./photons_hist"]
+ 
+    //create pad crop file
+    csv_slicer_crop_pad [label = <<B>Python</B><br />Sliced by R with pad value<br /> 3 pixle per side<br />(csv_slicer_crop_pad.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    csvdata_sliced_T_ROI_pad [label = "STORM_data\nsliced_R_pad\n./csvdata_sliced_T_ROI_pad"]
+    
+    //LocalL Analysis and plot; pad
+    spacialanalysis_localL [label = <<B>R</B><br />LocalL<br />pad<br />(spacialanalysis_localL.R)>, 
+                            shape = box, style=filled,
+                            color=sandybrown];
+    spacialdata_pad_local [label = "local\n./spacialdata_pad_local"];
+    localL_interpolation_pad [label = <<B>MATLAB</B><br />LocalL Interpolation<br />pad<br />(localL_interpolation_pad.m)>, 
+                            shape = box, style=filled,
+                            color=aquamarine];
+    spacialdata_pad_local_int [label = "local_grid\n./spacialdata_pad_local_int"];
+    plot_localL_pad [label = <<B>Python</B><br />Plot LocalL<br />pad<br />(plot_localL_pad.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    plot_local_pad_grid [label = "Grid Plot \nfor local_grid\n./plot_local_pad_grid"];
+    plot_local_pad_scatter [label = "Scatter Plot \nfor local_grid\n./plot_local_pad_scatter"];
+
+    //Nanocluster Analysis
+    grid_cluster_analysis_Fiji [label = <<B>Fiji</B><br />gird_cluster_analysis<br />(/Fiji/grid_cluster_analysis_Fiji.py)>, 
+                shape = box, style=filled;
+                color=lightblue];
+    int_grid_bi [label = "Nanocluster \nBinary \n./int_grid_bi"];
+    int_grid_data [label = "Nanocluster \nParticle Measurement \n./int_grid_data"];
+    ndd_filter [label = <<B>Python</B><br />Filter Cluster by Analysis<br />(int_grid_data_nndplot.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_filtered [label = "Nanocluster \nFiltered Analysis\n./int_grid_data_filtered"];
+    int_grid_data_summary [label = "Nanocluster \nHisto Plot\n./int_grid_data_summary"];
+    nnd [label = <<B>Python</B><br />NND Calculator<br />(nnd.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_dist [label = "Nanocluster \nWith nnd\n./int_grid_data_dist"];
+    nnd_plot [label = <<B>Python</B><br />Generate<br />1. NND Plot<br />2. NC area<br />3. NC density<br />(nnd_plot.py)>, 
+                    shape = box, style=filled,
+                    color=PaleGreen];
+    int_grid_data_nndplot [label = "Nanocluster \nWith nnd\n./int_grid_data_nndplot"];
+
+    //edges
+    //preprocessing
+    rawimg -> img_prepro;
+    img_prepro -> {preproimg imgintensity imgmetadata imgstat};
+    
+    //tSTORM analysis
+    preproimg -> tstormanalysis; 
+    tstormanalysis -> {csvdata driftcorr}; 
+    csvdata -> slicer_t;
+    slicer_t -> csvdata_sliced_T;
+    {csvdata_sliced_T, cropsize} -> slicer_r;
+    slicer_r -> csvdata_sliced_T_ROI;
+    
+    //spacial analysis
+    csvdata_sliced_T_ROI -> spatialanalysis;
+    spatialanalysis -> {spatialdata spatialdata_bi};
+
+    //spacial analysis plot
+    spatialdata -> plot_spatialdata;
+    plot_spatialdata -> {plot_K plot_L, plot_H, plot_total};
+    
+    //CBC analysis
+    csvdata_sliced_T_ROI -> CBC_analysis
+    CBC_analysis -> CBC_results
+
+    //data inference
+    csvdata_sliced_T_ROI -> data_inference_photon;
+    data_inference_photon -> {photons_hist photons_hist_summary};
+    CBC_results -> data_inference_cbc;
+    data_inference_cbc -> {CBC_histogram CBC_histogram_summary};
+    
+    //create pad crop file
+    {csvdata_sliced_T, cropsize} -> csv_slicer_crop_pad;
+    csv_slicer_crop_pad -> csvdata_sliced_T_ROI_pad;
+
+    //LocalL Analysis and plot; pad
+    csvdata_sliced_T_ROI_pad -> spacialanalysis_localL;
+    spacialanalysis_localL -> spacialdata_pad_local;
+    spacialdata_pad_local -> localL_interpolation_pad;
+    localL_interpolation_pad -> spacialdata_pad_local_int;
+    spacialdata_pad_local_int -> plot_localL_pad;
+    plot_localL_pad -> {plot_local_pad_grid, plot_local_pad_scatter};
+    
+    //Nanocluster Analysis
+    plot_local_pad_grid -> grid_cluster_analysis_Fiji;
+    grid_cluster_analysis_Fiji -> {int_grid_bi, int_grid_data};
+    int_grid_data -> ndd_filter;
+    ndd_filter -> {int_grid_data_filtered, int_grid_data_summary}
+    int_grid_data_filtered -> nnd
+    nnd -> int_grid_data_dist
+    int_grid_data_dist -> nnd_plot
+    nnd_plot -> int_grid_data_nndplot
+
+    subgraph cluster_preprocessing {
+        label="Folder: preprocessing";
+        preproimg;
+        imgintensity;
+        imgmetadata;
+        imgstat;
+    }
+
+    subgraph cluster_tstorm {
+        label="Folder: tstorm";
+        csvdata;
+        driftcorr;
+        csvdata_sliced_T;
+        csvdata_sliced_T_ROI;
+        csvdata_sliced_T_ROI_pad;
+        slicer_t;
+        slicer_r;
+        csv_slicer_crop_pad;
+        data_inference_photon;
+        photons_hist;
+        photons_hist_summary;
+    }
+
+    subgraph cluster_par {
+        label="Folder: par";
+        cropsize;
+    }
+
+    subgraph cluster_spacialtest {
+        label="Folder: Spacial_test";
+        spatialanalysis;
+        spatialdata;
+        spatialdata_bi;
+        subgraph cluster_spplot {
+            label="Folder: Spacial_test/plot";
+            plot_spatialdata;
+            plot_K;
+            plot_L;
+            plot_H;
+            plot_total;
+        }
+        spacialanalysis_localL;
+        spacialdata_pad_local;
+        localL_interpolation_pad;
+        spacialdata_pad_local_int;
+        plot_localL_pad;
+        plot_local_pad_grid;
+        plot_local_pad_scatter;
+
+        subgraph cluster_nnd {
+            label="Folder: Spacial_test/nnd";
+            grid_cluster_analysis_Fiji;
+            int_grid_bi;
+            int_grid_data;
+            ndd_filter;
+            int_grid_data_filtered;
+            int_grid_data_summary;
+            nnd;
+            int_grid_data_dist;
+            nnd_plot;
+            int_grid_data_nndplot;
+        }
+        
+    }
+
+    subgraph cluster_CBC {
+        label="Folder: CBC";
+        CBC_analysis;
+        CBC_results;
+        data_inference_cbc;
+        CBC_histogram;
+        CBC_histogram_summary;
+    }
+
+}
+
+

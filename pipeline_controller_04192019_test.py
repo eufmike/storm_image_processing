@@ -89,7 +89,7 @@ print(arg)
 subdir = 'Fiji'
 scriptpath = os.path.join(codepath, subdir, script_name)
 print("Start running: {}".format(script_name))
-subprocess.check_output([fiji, '--ij2', '--run', arg])
+subprocess.check_output([fiji, '--ij2', '--run', scriptpath, arg])
 print("End: {}".format(script_name))
 
 #%% [markdown]
@@ -278,7 +278,7 @@ print("End: {}".format(script_name))
 #%%
 # spatialanaylsis.R
 script_name = 'spatialanaylsis_localL.R'
-arg_list = [datapath, analysis_dir,'tstorm','csvdata_sliced_T_ROI_pad', 2, 3, 'spacial_test', 'spacialdata_local']
+arg_list = [datapath, analysis_dir,'tstorm','csvdata_sliced_T_ROI_pad', 2, 3, 'spacial_test', 'spacialdata_pad_local']
 arg = list2arg_python(arg_list)
 print(arg)
 
@@ -301,7 +301,7 @@ print("End: {}".format(script_name))
 
 #%%
 script_name = 'localL_interpolation_pad.m'
-arg_list = [codepath, datapath, analysis_dir, 'spacial_test', 'spacialdata_local', 'spacialdata_pad_local_int', 'par', 'cropsize.csv', 160, 30, 3]
+arg_list = [codepath, datapath, analysis_dir, 'spacial_test', 'spacialdata_pad_local', 'spacialdata_pad_local_int', 'par', 'cropsize.csv', 160, 30, 3]
 arg = list2arg_matlab(arg_list)
 print(arg)
 
@@ -325,7 +325,7 @@ print("End: {}".format(script_name))
 
 #%%
 script_name = 'plot_localL_pad.py'
-arg_list = [datapath, analysis_dir,'tstorm','spacial_test','spacialdata_local', 'spacialdata_pad_local_int',  2, 3, 3, 'plot_local_pad_scatter', 'plot_local_pad_grid']
+arg_list = [datapath, analysis_dir,'tstorm','spacial_test','spacialdata_pad_local', 'spacialdata_pad_local_int',  2, 3, 3, 'plot_local_pad_scatter', 'plot_local_pad_grid']
 arg = list2arg_python(arg_list)
 print(arg)
 
