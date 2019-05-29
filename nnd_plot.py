@@ -181,7 +181,7 @@ for c in range(nchannel):
 
     ## make plot    
     ax1 = plt.subplot(111)
-    ax1.bar(['widetype', 'knockout'], 
+    ax1.bar(['wildtype', 'knockout'], 
             data_temp_c_mean_group['min_dist_nm'], 
             yerr= data_temp_c_sem_group['min_dist_nm'], 
             color=['red', 'blue'],
@@ -220,7 +220,7 @@ for c in range(nchannel):
 
     ## make plot    
     ax1 = plt.subplot(121)
-    ax1.bar(['widetype', 'knockout'], 
+    ax1.bar(['wildtype', 'knockout'], 
             data_temp_c_mean_group['Area_nm2'], 
             yerr= data_temp_c_sem_group['Area_nm2'], 
             color=['red', 'blue'],
@@ -251,7 +251,7 @@ for c in range(nchannel):
 
     ## make plot    
     ax2 = plt.subplot(122)
-    ax2.bar(['widetype', 'knockout'], 
+    ax2.bar(['wildtype', 'knockout'], 
             data_temp_c_count_mean_group['Area_nm2'], 
             yerr= data_temp_c_count_sem_group['Area_nm2'], 
             color=['red', 'blue'],

@@ -32,8 +32,8 @@ op_dir = as.character(args[7])
 opkest_dir = as.character(args[8])
 
 # define output folders
-op_dir = 'spacial_test'
-opkest_dir = 'spacialdata_local'
+# op_dir = 'spacial_test'
+# opkest_dir = 'spacialdata_local'
 # opbi_dir = 'spacialdata_local_bi'
 
 opkest_path = file.path(path, analysis_dir, op_dir, opkest_dir)
