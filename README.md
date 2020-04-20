@@ -1,6 +1,12 @@
 # STORM Imaging Analysis
-This repository stores code generated for storm image analysis. 
+Features: Python, R, MATLAB, Numpy, Scipy, ImageJ/Fiji
 
+## Introduction
+This project was a collaboration aiming to analyze the nanoclusters of membrane proteins and the interaction between membrane proteins and lipid rafts. The function combined multiple platforms and packages including Python, R (spatstat), MATLAB, and ImageJ/Fiji(Thunderstorm) to employ Ripley's K function, Local-K, density map, and Coordinate-based colocalization. 
+
+![](/figures/storm_image_analysis.png)
+
+## Instruction
 Image: `.nd2` files acquired from Nikon d-STORM microscope.
 
 Analytical steps: 
@@ -20,3 +26,6 @@ Analytical steps:
                 8. size_MB: size of the file in MB
             * imgmetadata: store image metadata for individual files
     2. create folder `temp` 
+
+## License
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
